@@ -1,0 +1,6 @@
+{
+  "name": "AgroResiliente Inhambane — Portal de Autenticação",
+  "description": "Plataforma digital e portal moderno para produtores familiares de Inhambane com autenticação biométrica, 2FA multifator, redes sociais, recuperação por e-mail, modo escuro e relatórios PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

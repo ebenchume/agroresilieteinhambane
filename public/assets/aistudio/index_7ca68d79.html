@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AgroResiliente Inhambane | agroresiliente.co.mz</title>
+  <meta name="description" content="AgroResiliente Inhambane — plataforma digital para produtores: USSD, SMS, preços de mercado, alertas e assistência técnica. Homoíne, Inhambane, Moçambique.">
+  <meta name="author" content="AgroResiliente Inhambane">
+  <link rel="canonical" href="https://agroresiliente.co.mz/">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Toast notifications -->
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- Header / Nav -->
+  <header class="header">
+    <div class="w nav">
+      <a href="https://agroresiliente.co.mz/" class="logo" id="logo-link">AgroResiliente</a>
+      <nav class="nav-links" id="nav-links">
+        <a href="#canais">Canais</a>
+        <a href="#modulos">Módulos</a>
+        <a href="#ferramentas">Ferramentas</a>
+        <a href="#ussd">USSD</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="AgroResiliente-Site.zip" download="AgroResiliente-Site.zip" class="nav-download">Descarregar</a>
+      </nav>
+      <div class="auth-area" id="auth-area">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content views -->
+  <main id="app">
+    <!-- Landing view (default) -->
+    <div id="view-landing">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="w two">
+          <div>
+            <div class="k">Homoíne · Inhambane · Moçambique</div>
+            <h1>Agricultura resiliente ao clima, com informação, assistência técnica e mercados ao alcance de todos</h1>
+            <p class="lead">Uma plataforma digital integrada para pequenos e médios produtores familiares: USSD e SMS para quem tem um telemóvel simples, app e PWA para quem tem smartphone, e agentes de extensão no terreno.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="btn-cta-register">Criar conta grátis</button>
+              <button class="btn btn-outline" id="btn-cta-login">Entrar</button>
+              <a class="btn btn-ghost" href="#ussd" id="btn-hero-ussd">Provar USSD</a>
+              <a class="btn btn-ghost" href="#ussd" id="btn-hero-sms">Provar SMS</a>
+            </div>
+          </div>
+          <div class="phone">
+            <pre>*123#
+AgroResiliente
+1. Precos de Mercado
+2. Alertas Diarios
+3. Boas Praticas
+4. Falar com Extensionista
+5. Vender / Comprar
+6. Minha Conta</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Metas -->
+      <section class="dark">
+        <div class="w">
+          <div class="k">Metas do Plano de Negócio</div>
+          <div class="g metas">
+            <div><div class="num">2.500</div>produtores registados no Ano 1</div>
+            <div><div class="num">8.000</div>produtores nos Anos 2–3</div>
+            <div><div class="num">10</div>agentes de extensão (8–12)</div>
+            <div><div class="num">4</div>centros de demonstração</div>
+            <div><div class="num">25–35%</div>aumento de produtividade</div>
+            <div><div class="num">60%</div>adoção de uma prática climático-inteligente</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Canais -->
+      <section id="canais">
+        <div class="w">
+          <div class="k">Modelo híbrido multicanal</div>
+          <h2>Cada produtor usa o canal que tem</h2>
+          <div class="g">
+            <div class="c">
+              <h3>USSD e SMS</h3>
+              <p>Preços, alertas e boas práticas em qualquer telemóvel, sem internet. Menus de até 160 caracteres em português, bitonga e xitswa.</p>
+            </div>
+            <div class="c">
+              <h3>App Android e PWA</h3>
+              <p>Lições multimédia, marketplace e alertas push. O agente de campo trabalha 100% offline e sincroniza quando há rede.</p>
+            </div>
+            <div class="c">
+              <h3>Painel web (backoffice)</h3>
+              <p>Dashboards de KPIs, mapa de campos, mensagens em massa, moderação e relatórios para a coordenação, TI e monitoria.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Módulos -->
+      <section id="modulos" class="bg-alt">
+        <div class="w">
+          <div class="k">Módulos do sistema</div>
+          <h2>Sete módulos, uma só conta por produtor</h2>
+          <div class="g">
+            <div class="c">
+              <h3>Registo de produtores</h3>
+              <p>Segmentação por tamanho, associação, jovens e mulheres chefes de família. Campos georreferenciados pelos agentes, com consentimento registado.</p>
+            </div>
+            <div class="c">
+              <h3>Meteorologia e pragas</h3>
+              <p>Alertas por zona (Homoíne-Sede, Maculuve, Nhanombe), cultura e segmento, com aprovação humana nos casos graves.</p>
+            </div>
+            <div class="c">
+              <h3>Extensão digital</h3>
+              <p>E-learning em cartões curtos, áudio e vídeo leve, e árvore de decisão por USSD: gota-a-gota, solo, sementes melhoradas.</p>
+            </div>
+            <div class="c">
+              <h3>Marketplace</h3>
+              <p>Mandioca, milho, amendoim, feijão nhemba, mapira, caju e hortícolas. Propostas, ordens, pagamento e comissão de intermediação.</p>
+            </div>
+            <div class="c">
+              <h3>Pagamentos e carteira</h3>
+              <p>Integração com M-Pesa e e-Mola. PIN nunca passa pela plataforma. Reconciliação diária e comprovativos por SMS.</p>
+            </div>
+            <div class="c">
+              <h3>Assinaturas Premium</h3>
+              <p>Alertas prioritários, recomendações personalizadas e acesso a formação certificada para quem quer mais.</p>
+            </div>
+            <div class="c">
+              <h3>Monitoria e avaliação</h3>
+              <p>Indicadores de adopção, produtividade e impacto climático. Relatórios para doadores e governo.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ferramentas -->
+      <section id="ferramentas">
+        <div class="w">
+          <div class="k">Ferramentas do produtor</div>
+          <h2>Tudo o que precisa numa só conta</h2>
+          <div class="g">
+            <div class="c">
+              <h3>Preços de mercado</h3>
+              <p>Actualizações diárias dos principais mercados da província. Compare e decida quando vender.</p>
+            </div>
+            <div class="c">
+              <h3>Alertas climáticos</h3>
+              <p>Chuva, seca, vento e risco de pragas enviados por SMS ou notificação, na sua língua.</p>
+            </div>
+            <div class="c">
+              <h3>Boas práticas</h3>
+              <p>Cartões curtos e áudio sobre solo, água, sementes e pós-colheita adaptados a Homoíne.</p>
+            </div>
+            <div class="c">
+              <h3>Falar com extensionista</h3>
+              <p>Peça uma chamada ou envie uma pergunta. O agente responde no terreno ou por telefone.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- USSD + SMS -->
+      <section id="ussd" class="bg-alt">
+        <div class="w">
+          <div class="k">Canais sem internet</div>
+          <h2>USSD e SMS — experimente agora</h2>
+          <p class="lead" style="margin-top:0;max-width:640px">Funciona em qualquer telemóvel. Sem app, sem dados. Escolha o canal e simule a experiência do produtor.</p>
+
+          <div class="channel-tabs" role="tablist">
+            <button type="button" class="channel-tab active" data-channel="ussd" id="tab-ussd">USSD *123#</button>
+            <button type="button" class="channel-tab" data-channel="sms" id="tab-sms">SMS</button>
+          </div>
+
+          <div class="channel-panels">
+            <!-- USSD panel -->
+            <div class="channel-panel two" id="panel-ussd">
+              <div>
+                <h3 style="margin-bottom:12px">Menu USSD</h3>
+                <p>Digite <strong>*123#</strong> e navegue com as teclas. Ideal para consultas interactivas.</p>
+                <ul class="t">
+                  <li>Preços de <strong>12 culturas</strong> em 4 mercados</li>
+                  <li>Alertas diários da sua zona</li>
+                  <li>Boas práticas por tema</li>
+                  <li>Contacto com extensionista</li>
+                  <li>Marketplace e conta</li>
+                </ul>
+                <div class="channel-actions">
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-ussd-login">Entrar</button>
+                  <button type="button" class="btn btn-outline btn-sm" id="btn-switch-to-sms">Abrir SMS</button>
+                </div>
+              </div>
+              <div class="ussd-public">
+                <div class="phone phone-interactive">
+                  <div class="ussd-screen" id="ussd-screen-public">
+                    <pre id="ussd-content-public">*123#
+AgroResiliente
+1. Precos de Mercado
+2. Alertas Diarios
+3. Boas Praticas
+4. Falar com Extensionista
+5. Vender / Comprar
+6. Minha Conta</pre>
+                  </div>
+                  <div class="ussd-keys ussd-keys-public">
+                    <button type="button" data-key="1">1</button>
+                    <button type="button" data-key="2">2</button>
+                    <button type="button" data-key="3">3</button>
+                    <button type="button" data-key="4">4</button>
+                    <button type="button" data-key="5">5</button>
+                    <button type="button" data-key="6">6</button>
+                    <button type="button" data-key="7">7</button>
+                    <button type="button" data-key="8">8</button>
+                    <button type="button" data-key="9">9</button>
+                    <button type="button" data-key="0" class="wide">0 · Voltar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SMS panel -->
+            <div class="channel-panel" id="panel-sms" hidden>
+              <div class="two">
+                <div>
+                  <h3 style="margin-bottom:12px">Alertas e consultas por SMS</h3>
+                  <p>Envie uma palavra-chave para o número curto <strong>123</strong> e receba a resposta por SMS.</p>
+                  <ul class="t">
+                    <li><code>PRECO milho</code> — preço actual</li>
+                    <li><code>ALERTA</code> — alertas da sua zona</li>
+                    <li><code>DICA solo</code> — boa prática</li>
+                    <li><code>AJUDA</code> — lista de comandos</li>
+                  </ul>
+                  <div class="info-box">
+                    <strong>Lógica do comando ALERTA</strong>
+                    <p>Sem login: envia alertas gerais de Homoíne (chuva, pragas, vento).</p>
+                    <p>Com login: personaliza com o seu nome, zona de registo e cultura principal — útil para recomendações mais precisas.</p>
+                  </div>
+                  <div class="channel-actions">
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-sms-login">Entrar no SMS</button>
+                    <button type="button" class="btn btn-outline btn-sm" id="btn-sms-register">Criar conta</button>
+                    <button type="button" class="btn btn-ghost btn-sm" id="btn-switch-to-ussd">Abrir USSD</button>
+                  </div>
+                </div>
+                <div class="sms-sim">
+                  <div class="sms-phone">
+                    <div class="sms-header">SMS · 123</div>
+                    <div class="sms-login-bar" id="sms-login-bar">
+                      <span id="sms-login-text">Entre para alertas personalizados</span>
+                      <button type="button" id="btn-sms-bar-login">Entrar</button>
+                    </div>
+                    <div class="sms-thread" id="sms-thread">
+                      <div class="sms-bubble in">AgroResiliente: Bem-vindo. Envie PRECO, ALERTA, DICA ou AJUDA.</div>
+                    </div>
+                    <form class="sms-compose" id="form-sms">
+                      <input type="text" id="sms-input" placeholder="Ex: PRECO mandioca" autocomplete="off" maxlength="160">
+                      <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+                    </form>
+                    <div class="sms-quick">
+                      <button type="button" class="chip-btn" data-sms="PRECO milho">PRECO milho</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO mandioca">PRECO mandioca</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO caju">PRECO caju</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO mapira">PRECO mapira</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO amendoim">PRECO amendoim</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO feijao">PRECO feijão</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO horticola">PRECO hortícola</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO batata">PRECO batata</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO gergelim">PRECO gergelim</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO banana">PRECO banana</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO coco">PRECO coco</button>
+                      <button type="button" class="chip-btn" data-sms="PRECO boer">PRECO boer</button>
+                      <button type="button" class="chip-btn" data-sms="ALERTA">ALERTA</button>
+                      <button type="button" class="chip-btn" data-sms="DICA solo">DICA solo</button>
+                      <button type="button" class="chip-btn" data-sms="DICA agua">DICA agua</button>
+                      <button type="button" class="chip-btn" data-sms="AJUDA">AJUDA</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Segurança -->
+      <section>
+        <div class="w">
+          <div class="k">Segurança e desempenho</div>
+          <h2>Cada byte custa dinheiro ao produtor</h2>
+          <div class="g">
+            <div class="c">
+              <h3>Orçamento de dados</h3>
+              <p>Shell da PWA até 150 KB. Sync diário do agente até 30 KB. Imagens até 120 KB, comprimidas no telemóvel.</p>
+            </div>
+            <div class="c">
+              <h3>Proteção de dados</h3>
+              <p>TLS 1.3, cifra de campo, SQLCipher no dispositivo, limpeza remota, MFA no backoffice e consentimento por finalidade.</p>
+            </div>
+            <div class="c">
+              <h3>Transações</h3>
+              <p>O PIN da carteira nunca passa pela plataforma. Idempotência, webhooks assinados e reconciliação diária.</p>
+            </div>
+            <div class="c">
+              <h3>Disponibilidade</h3>
+              <p>USSD com 99,5% mensal e resposta p95 abaixo de 800 ms. Alertas críticos por SMS entregues em menos de 5 minutos.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Roadmap -->
+      <section id="roadmap" class="bg-alt">
+        <div class="w">
+          <div class="k">Plano de entrega</div>
+          <h2>Do piloto em Homoíne à escala provincial</h2>
+          <div class="g">
+            <div class="c">
+              <h3>Fase 0</h3>
+              <p><strong>Semanas 1–4.</strong> Contratos com agregador e operadoras, parecer jurídico, modelo de dados e infraestrutura.</p>
+            </div>
+            <div class="c">
+              <h3>Fase 1</h3>
+              <p><strong>Meses 2–4.</strong> MVP piloto: registo offline, USSD/SMS, alertas e backoffice base.</p>
+            </div>
+            <div class="c">
+              <h3>Fase 2</h3>
+              <p><strong>Meses 4–7.</strong> Marketplace, comissões, mobile money, assinaturas e formação certificada.</p>
+            </div>
+            <div class="c">
+              <h3>Fase 3</h3>
+              <p><strong>Meses 7–12.</strong> Testes de carga, pen-test, recuperação de desastres e expansão a novos distritos.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Account view (shown when logged in) -->
+    <div id="view-account" hidden>
+      <section class="account-hero">
+        <div class="w">
+          <div class="k">Minha Conta</div>
+          <h1 id="account-greeting">Olá</h1>
+          <p class="lead" id="account-subtitle">Bem-vindo à sua área de produtor.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="w">
+          <div class="g account-grid">
+            <div class="c account-card">
+              <h3>Dados pessoais</h3>
+              <dl class="profile-list" id="profile-data">
+                <!-- filled by JS -->
+              </dl>
+              <button class="btn btn-outline btn-sm" id="btn-edit-profile">Editar perfil</button>
+            </div>
+
+            <div class="c account-card">
+              <h3>Estado da conta</h3>
+              <p><span class="chip" id="account-plan">Gratuita</span></p>
+              <p class="muted">Acesso a preços, alertas básicos e boas práticas.</p>
+              <button class="btn btn-primary btn-sm" id="btn-upgrade">Actualizar para Premium</button>
+            </div>
+
+            <div class="c account-card">
+              <h3>Atalhos rápidos</h3>
+              <ul class="quick-links">
+                <li><button class="link-btn" data-action="prices">Ver preços de mercado</button></li>
+                <li><button class="link-btn" data-action="alerts">Meus alertas</button></li>
+                <li><button class="link-btn" data-action="practices">Boas práticas</button></li>
+                <li><button class="link-btn" data-action="extension">Contactar extensionista</button></li>
+              </ul>
+            </div>
+
+            <div class="c account-card">
+              <h3>Simulação USSD</h3>
+              <p class="muted">Experimente o menu como se estivesse no telemóvel.</p>
+              <div class="ussd-sim" id="ussd-sim">
+                <div class="ussd-screen" id="ussd-screen">
+                  <pre id="ussd-content">*123#
+AgroResiliente
+1. Precos de Mercado
+2. Alertas Diarios
+3. Boas Praticas
+4. Falar com Extensionista
+5. Vender / Comprar
+6. Minha Conta</pre>
+                </div>
+                <div class="ussd-keys">
+                  <button data-key="1">1</button>
+                  <button data-key="2">2</button>
+                  <button data-key="3">3</button>
+                  <button data-key="4">4</button>
+                  <button data-key="5">5</button>
+                  <button data-key="6">6</button>
+                  <button data-key="7">7</button>
+                  <button data-key="8">8</button>
+                  <button data-key="9">9</button>
+                  <button data-key="0" class="wide">0 · Voltar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer dark">
+    <div class="w footer-grid">
+      <div>
+        <strong class="logo">AgroResiliente Inhambane</strong>
+        <p>Plataforma digital para produtores familiares · USSD, SMS e web</p>
+        <p style="margin-top:10px"><a href="https://agroresiliente.co.mz/" style="color:#E3B04B;text-decoration:none;font-weight:600">agroresiliente.co.mz</a></p>
+        <p>Distrito de Homoíne · Província de Inhambane · Moçambique</p>
+      </div>
+      <div class="footer-contact">
+        <div class="k" style="color:#E3B04B;margin-bottom:10px">Contactos</div>
+        <p><strong>Endereço:</strong> Homoíne, Província de Inhambane</p>
+        <p><strong>Site:</strong> <a href="https://agroresiliente.co.mz/">agroresiliente.co.mz</a></p>
+        <p><strong>E-mail:</strong> <a href="mailto:ebenchume@sapo.mz">ebenchume@sapo.mz</a></p>
+        <p><strong>Telefone / WhatsApp:</strong> <a href="tel:+258876473432">876 473 432</a></p>
+        <div class="footer-actions">
+          <a class="btn btn-primary btn-sm" href="AgroResiliente-Site.zip" download="AgroResiliente-Site.zip">Descarregar o site</a>
+          <a class="btn btn-whatsapp btn-sm" href="https://wa.me/258876473432?text=Ol%C3%A1%2C%20vi%20o%20site%20agroresiliente.co.mz%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%A3o" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn btn-email btn-sm" href="mailto:ebenchume@sapo.mz?subject=Contacto%20via%20agroresiliente.co.mz">E-mail</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp + Email -->
+  <div class="float-contacts">
+    <a class="float-btn wa" href="https://wa.me/258876473432?text=Ol%C3%A1%2C%20vi%20o%20site%20agroresiliente.co.mz%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%A3o" target="_blank" rel="noopener" title="WhatsApp" aria-label="Contactar por WhatsApp">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    <a class="float-btn mail" href="mailto:ebenchume@sapo.mz?subject=Contacto%20via%20agroresiliente.co.mz" title="E-mail" aria-label="Enviar e-mail">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    </a>
+  </div>
+
+  <!-- Modal: Login -->
+  <div class="modal-overlay" id="modal-login" hidden>
+    <div class="modal">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Entrar</h2>
+      <p class="muted">Aceda à sua conta de produtor</p>
+      <form id="form-login">
+        <label>
+          Telefone ou e-mail
+          <input type="text" name="identifier" required placeholder="84xxxxxxx ou email@exemplo.com" autocomplete="username">
+        </label>
+        <label>
+          Palavra-passe
+          <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password">
+        </label>
+        <p class="form-error" id="login-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+      </form>
+      <p class="modal-footer">Ainda não tem conta? <button type="button" class="link-btn" id="switch-to-register">Criar conta</button></p>
+    </div>
+  </div>
+
+  <!-- Modal: Register -->
+  <div class="modal-overlay" id="modal-register" hidden>
+    <div class="modal modal-wide">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Criar conta</h2>
+      <p class="muted">Registe-se como produtor em Homoíne</p>
+      <form id="form-register">
+        <div class="form-row">
+          <label>
+            Nome completo
+            <input type="text" name="name" required placeholder="Ex: Maria João" autocomplete="name">
+          </label>
+          <label>
+            Telefone (M-Pesa / e-Mola)
+            <input type="tel" name="phone" required placeholder="84xxxxxxx" autocomplete="tel">
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            E-mail (opcional)
+            <input type="email" name="email" placeholder="email@exemplo.com" autocomplete="email">
+          </label>
+          <label>
+            Localidade / Zona
+            <select name="zone" required>
+              <option value="">Seleccione…</option>
+              <option value="Homoíne-Sede">Homoíne-Sede</option>
+              <option value="Maculuve">Maculuve</option>
+              <option value="Nhanombe">Nhanombe</option>
+              <option value="Outra">Outra zona de Homoíne</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            Principal cultura
+            <select name="crop">
+              <option value="Mandioca">Mandioca</option>
+              <option value="Milho">Milho</option>
+              <option value="Amendoim">Amendoim</option>
+              <option value="Feijão nhemba">Feijão nhemba</option>
+              <option value="Mapira">Mapira</option>
+              <option value="Caju">Caju</option>
+              <option value="Hortícolas">Hortícolas</option>
+              <option value="Outra">Outra</option>
+            </select>
+          </label>
+          <label>
+            Tipo de produtor
+            <select name="type">
+              <option value="Familiar">Familiar</option>
+              <option value="Associado">Associado</option>
+              <option value="Jovem">Jovem produtor</option>
+              <option value="Mulher chefe de família">Mulher chefe de família</option>
+            </select>
+          </label>
+        </div>
+        <div class="form-row">
+          <label>
+            Palavra-passe
+            <input type="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          </label>
+          <label>
+            Confirmar palavra-passe
+            <input type="password" name="password2" required minlength="6" placeholder="Repita a palavra-passe" autocomplete="new-password">
+          </label>
+        </div>
+        <label class="checkbox">
+          <input type="checkbox" name="consent" required>
+          <span>Autorizo o tratamento dos meus dados para alertas, assistência técnica e marketplace, conforme a política de privacidade.</span>
+        </label>
+        <p class="form-error" id="register-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-block">Criar conta</button>
+      </form>
+      <p class="modal-footer">Já tem conta? <button type="button" class="link-btn" id="switch-to-login">Entrar</button></p>
+    </div>
+  </div>
+
+  <!-- Modal: Edit profile -->
+  <div class="modal-overlay" id="modal-edit" hidden>
+    <div class="modal">
+      <button class="modal-close" data-close>&times;</button>
+      <h2>Editar perfil</h2>
+      <form id="form-edit">
+        <label>
+          Nome completo
+          <input type="text" name="name" required>
+        </label>
+        <label>
+          Localidade / Zona
+          <select name="zone" required>
+            <option value="Homoíne-Sede">Homoíne-Sede</option>
+            <option value="Maculuve">Maculuve</option>
+            <option value="Nhanombe">Nhanombe</option>
+            <option value="Outra">Outra zona de Homoíne</option>
+          </select>
+        </label>
+        <label>
+          Principal cultura
+          <select name="crop">
+            <option value="Mandioca">Mandioca</option>
+            <option value="Milho">Milho</option>
+            <option value="Amendoim">Amendoim</option>
+            <option value="Feijão nhemba">Feijão nhemba</option>
+            <option value="Mapira">Mapira</option>
+            <option value="Caju">Caju</option>
+            <option value="Hortícolas">Hortícolas</option>
+            <option value="Outra">Outra</option>
+          </select>
+        </label>
+        <label>
+          Tipo de produtor
+          <select name="type">
+            <option value="Familiar">Familiar</option>
+            <option value="Associado">Associado</option>
+            <option value="Jovem">Jovem produtor</option>
+            <option value="Mulher chefe de família">Mulher chefe de família</option>
+          </select>
+        </label>
+        <p class="form-error" id="edit-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-block">Guardar alterações</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
