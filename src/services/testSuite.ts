@@ -13,6 +13,7 @@ import { ForumService } from './forum';
 import { PestService } from './pestDatabase';
 import { speechService } from './speech';
 import { RESILIENT_TIPS_DATABASE, INHAMBANE_SEASON_PHASES } from '../components/AgroResilientTips';
+import { themeService, THEME_STORAGE_KEY } from './theme';
 
 export const AutomatedTestSuite = {
   async runAllTests(onProgress?: (results: TestResult[]) => void): Promise<TestResult[]> {
@@ -378,6 +379,42 @@ export const AutomatedTestSuite = {
           return {
             assertions: 6,
             message: `${RESILIENT_TIPS_DATABASE.length} recomendações distribuídas por ${INHAMBANE_SEASON_PHASES.length} fases agrárias de Inhambane com persistência no Caderno de Campo.`
+          };
+        }
+      },
+      {
+        id: 'test_theme_selector',
+        title: 'Seletor de Tema (Dark/Light), Persistência Local e Classe HTML',
+        category: 'Acessibilidade' as const,
+        run: async () => {
+          const initialMode = themeService.getMode();
+
+          // 1. Test Dark Theme switch
+          themeService.setTheme('dark');
+          const isDarkActive = themeService.isDarkMode();
+          const hasDarkClass = document.documentElement.classList.contains('dark');
+          const storedDark = localStorage.getItem(THEME_STORAGE_KEY);
+
+          if (!isDarkActive || !hasDarkClass || storedDark !== 'dark') {
+            throw new Error(`Falha ao ativar Modo Escuro: dark=${isDarkActive}, class=${hasDarkClass}, stored=${storedDark}`);
+          }
+
+          // 2. Test Light Theme switch
+          themeService.setTheme('light');
+          const isLightActive = !themeService.isDarkMode();
+          const lacksDarkClass = !document.documentElement.classList.contains('dark');
+          const storedLight = localStorage.getItem(THEME_STORAGE_KEY);
+
+          if (!isLightActive || !lacksDarkClass || storedLight !== 'light') {
+            throw new Error(`Falha ao ativar Modo Claro: light=${isLightActive}, lacksDarkClass=${lacksDarkClass}, stored=${storedLight}`);
+          }
+
+          // 3. Restore initial mode to respect user preference
+          themeService.setTheme(initialMode);
+
+          return {
+            assertions: 6,
+            message: 'Seletor Dark/Light verificado: alternância de classe "dark" na tag <html> e persistência no localStorage (chave: agro_theme) com sincronização em tempo real.'
           };
         }
       }

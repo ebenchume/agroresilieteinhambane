@@ -92,7 +92,7 @@ export interface MarketPrice {
 export interface TestResult {
   id: string;
   title: string;
-  category: 'Segurança' | 'Biometria' | '2FA' | 'Offline' | 'Social' | 'Relatórios' | 'Clima' | 'Agronomia' | 'Finanças';
+  category: 'Segurança' | 'Biometria' | '2FA' | 'Offline' | 'Social' | 'Relatórios' | 'Clima' | 'Agronomia' | 'Finanças' | 'Acessibilidade';
   status: 'passed' | 'failed' | 'running' | 'idle';
   durationMs: number;
   assertions: number;

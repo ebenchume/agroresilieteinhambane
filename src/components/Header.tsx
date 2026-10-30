@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
-  Moon, 
-  Sun, 
   Wifi, 
   WifiOff, 
   Bell, 
@@ -12,6 +10,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { Session, AppNotification } from '../types/auth';
+import { ThemeSelector } from './ThemeSelector';
 
 interface HeaderProps {
   session: Session | null;
@@ -32,13 +31,6 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigateHome,
   unreadCount
 }) => {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
-
   const [isOnline, setIsOnline] = useState<boolean>(() => {
     return typeof navigator !== 'undefined' ? navigator.onLine : true;
   });
@@ -57,18 +49,6 @@ export const Header: React.FC<HeaderProps> = ({
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-
-  const toggleDarkMode = () => {
-    const nextDark = !isDark;
-    setIsDark(nextDark);
-    if (nextDark) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('agro_theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('agro_theme', 'light');
-    }
-  };
 
   const getInitials = (name: string) => {
     return name
@@ -151,15 +131,8 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-            aria-label={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
-            title={isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro'}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
-          </button>
+          {/* Accessible Theme Selector (Claro / Escuro) */}
+          <ThemeSelector />
 
           {/* User Auth Area */}
           {session ? (

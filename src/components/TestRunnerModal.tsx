@@ -139,7 +139,7 @@ export const TestRunnerModal: React.FC<TestRunnerModalProps> = ({
 
         {/* Category Filter Tabs */}
         <div className="flex items-center gap-1.5 py-3 overflow-x-auto text-xs no-scrollbar">
-          {['all', 'Segurança', 'Clima', 'Biometria', '2FA', 'Offline', 'Social', 'Relatórios'].map(cat => (
+          {['all', 'Acessibilidade', 'Segurança', 'Clima', 'Agronomia', 'Biometria', '2FA', 'Offline', 'Social', 'Relatórios'].map(cat => (
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
