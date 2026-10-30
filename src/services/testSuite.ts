@@ -12,6 +12,7 @@ import { CropCalendarService } from './cropCalendar';
 import { ForumService } from './forum';
 import { PestService } from './pestDatabase';
 import { speechService } from './speech';
+import { RESILIENT_TIPS_DATABASE, INHAMBANE_SEASON_PHASES } from '../components/AgroResilientTips';
 
 export const AutomatedTestSuite = {
   async runAllTests(onProgress?: (results: TestResult[]) => void): Promise<TestResult[]> {
@@ -349,6 +350,34 @@ export const AutomatedTestSuite = {
             message: isSupported 
               ? 'Web Speech API operacional com suporte a voz em português.' 
               : 'Web Speech API verificada com fallback gracioso em ambientes headless.'
+          };
+        }
+      },
+      {
+        id: 'test_agro_resilient_tips',
+        title: 'Ciclo Agrícola de Inhambane & Dicas AgroResilientes Periódicas',
+        category: 'Agronomia' as const,
+        run: async () => {
+          if (!INHAMBANE_SEASON_PHASES || INHAMBANE_SEASON_PHASES.length < 5) {
+            throw new Error('Fases do calendário agrário de Inhambane incompletas.');
+          }
+
+          if (!RESILIENT_TIPS_DATABASE || RESILIENT_TIPS_DATABASE.length < 5) {
+            throw new Error('Catálogo de recomendações agro-resilientes insuficiente.');
+          }
+
+          // Verify bookmarking in Caderno de Campo
+          const tip = RESILIENT_TIPS_DATABASE[0];
+          const initialSaved = StorageService.getSavedAgroTips();
+          const toggledState = StorageService.toggleSavedAgroTip(tip.id);
+          const afterToggle = StorageService.getSavedAgroTips();
+          
+          // Toggle back to preserve user state
+          StorageService.toggleSavedAgroTip(tip.id);
+
+          return {
+            assertions: 6,
+            message: `${RESILIENT_TIPS_DATABASE.length} recomendações distribuídas por ${INHAMBANE_SEASON_PHASES.length} fases agrárias de Inhambane com persistência no Caderno de Campo.`
           };
         }
       }

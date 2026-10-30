@@ -284,6 +284,35 @@ export const StorageService = {
     } catch {}
   },
 
+  // Saved Agro-Resilient Tips (Caderno de Campo)
+  getSavedAgroTips(): string[] {
+    try {
+      const data = localStorage.getItem('agro_saved_tips_v1');
+      return data ? JSON.parse(data) : ['tip-milho-consociacao', 'tip-solo-zai'];
+    } catch {
+      return ['tip-milho-consociacao', 'tip-solo-zai'];
+    }
+  },
+
+  toggleSavedAgroTip(tipId: string): boolean {
+    try {
+      const saved = this.getSavedAgroTips();
+      const index = saved.indexOf(tipId);
+      let isSaved = false;
+      if (index >= 0) {
+        saved.splice(index, 1);
+        isSaved = false;
+      } else {
+        saved.push(tipId);
+        isSaved = true;
+      }
+      localStorage.setItem('agro_saved_tips_v1', JSON.stringify(saved));
+      return isSaved;
+    } catch {
+      return false;
+    }
+  },
+
   // Helper to generate 2FA backup codes
   generateBackupCodes(): string[] {
     const codes: string[] = [];

@@ -24,7 +24,8 @@ import {
   Users,
   Bug,
   Calculator,
-  BarChart3
+  BarChart3,
+  Compass
 } from 'lucide-react';
 import { User, AuditLog, MarketPrice } from '../types/auth';
 import { StorageService } from '../services/storage';
@@ -38,6 +39,7 @@ import { CommunityForumSection } from './CommunityForumSection';
 import { PestDiagnosticSection } from './PestDiagnosticSection';
 import { FarmCalculatorSection } from './FarmCalculatorSection';
 import { ProductivityChartSection } from './ProductivityChartSection';
+import { AgroResilientTips } from './AgroResilientTips';
 
 interface DashboardProps {
   user: User;
@@ -54,7 +56,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   marketPrices,
   onShowToast
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => StorageService.getAuditLogs());
   const [showBackupCodes, setShowBackupCodes] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -329,6 +331,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('agro-tips')}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'agro-tips'
+              ? 'bg-emerald-700 text-white dark:bg-emerald-600 shadow-sm'
+              : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
+          }`}
+        >
+          <Compass className="w-4 h-4 text-emerald-300" />
+          <span className="flex items-center gap-1.5">
+            <span>Dicas AgroResilientes</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          </span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('productivity')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'productivity'
@@ -452,6 +469,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
+          {/* Periodic Agro-Resilient Regional Tips (Inhambane Agricultural Cycle) */}
+          <AgroResilientTips user={user} onShowToast={onShowToast} />
+
           {/* AI Agronomic Highlights Banner */}
           <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-50 via-emerald-100/50 to-stone-100 dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-stone-900 border border-emerald-200 dark:border-emerald-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
@@ -715,6 +735,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* TAB: DICAS AGRORESILIENTES PERIÓDICAS (CICLO DE INHAMBANE) */}
+      {activeTab === 'agro-tips' && (
+        <div className="space-y-6">
+          <AgroResilientTips
+            user={user}
+            onShowToast={onShowToast}
+          />
         </div>
       )}
 
