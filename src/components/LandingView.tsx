@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   ShieldCheck, 
-  Fingerprint, 
   Smartphone, 
-  TrendingUp, 
-  CloudRain, 
   ArrowRight, 
   Download, 
   WifiOff, 
   CheckCircle2,
   Users,
   Compass,
-  FileCheck
+  FileCheck,
+  Sprout,
+  Sun,
+  ClipboardList
 } from 'lucide-react';
 import { CropFiguresGallery } from './CropFiguresGallery';
+import { ProducerMode } from './producer/ProducerMode';
+import { ExtensionistMode } from './extensionist/ExtensionistMode';
+import { MobileService } from '../services/mobileService';
+import { UserProfileType } from '../types/mobileApp';
 
 interface LandingViewProps {
   onOpenAuth: (mode?: 'login' | 'register') => void;
@@ -24,12 +28,34 @@ export const LandingView: React.FC<LandingViewProps> = ({
   onOpenAuth,
   onOpenTestRunner
 }) => {
+  // Mobile Profile Selector State ('produtor' | 'extensionista')
+  const [userProfile, setUserProfile] = useState<UserProfileType>(() => MobileService.getUserProfile());
+  const [sunlightMode, setSunlightMode] = useState<boolean>(() => MobileService.getSunlightMode());
+
+  // USSD / SMS interactive state
   const [activeChannel, setActiveChannel] = useState<'ussd' | 'sms'>('ussd');
   const [ussdPath, setUssdPath] = useState('root');
   const [smsLog, setSmsLog] = useState<Array<{ text: string; direction: 'in' | 'out' }>>([
-    { text: 'AgroResiliente: Bem-vindo a Homoíne. Envie PRECO milho, ALERTA, DICA solo ou AJUDA.', direction: 'in' }
+    { text: 'AgroResiliente: Bem-vindo a Inhambane. Envie PRECO milho, ALERTA, DICA solo ou AJUDA.', direction: 'in' }
   ]);
   const [smsInput, setSmsInput] = useState('');
+
+  const galleryRef = useRef<HTMLDivElement>(null);
+
+  const handleSelectProfile = (profile: UserProfileType) => {
+    setUserProfile(profile);
+    MobileService.setUserProfile(profile);
+  };
+
+  const handleToggleSunlight = () => {
+    const next = !sunlightMode;
+    setSunlightMode(next);
+    MobileService.setSunlightMode(next);
+  };
+
+  const handleScrollToGallery = () => {
+    galleryRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const ussdScreens: Record<string, string> = {
     root: `*123#\nAgroResiliente Inhambane\n1. Precos de Mercado\n2. Alertas Diarios\n3. Boas Praticas\n4. Falar com Extensionista\n5. Vender / Comprar\n6. Minha Conta`,
@@ -78,343 +104,307 @@ export const LandingView: React.FC<LandingViewProps> = ({
   };
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="pt-12 sm:pt-16 pb-16 border-b border-stone-200 dark:border-stone-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Column: Messaging */}
-            <div className="lg:col-span-7 space-y-6">
+    <div className={sunlightMode ? 'bg-black text-white min-h-screen' : ''}>
+      {/* Top Mobile-First App Header & Profile Selection */}
+      <section className={`py-6 sm:py-8 border-b transition-colors ${
+        sunlightMode 
+          ? 'bg-black border-yellow-400' 
+          : 'bg-stone-50/80 dark:bg-stone-950/80 border-stone-200 dark:border-stone-800'
+      }`}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-5">
+          {/* Main App Title & Tagline */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 tracking-wider uppercase">
-                  Homoíne · Inhambane · Moçambique
+                <span className={`text-[11px] font-black uppercase tracking-wider ${
+                  sunlightMode ? 'text-yellow-400' : 'text-emerald-700 dark:text-emerald-400'
+                }`}>
+                  Homoíne · Panda · Maxixe · Inhambane
                 </span>
                 <span className="text-stone-300 dark:text-stone-700">·</span>
-                <span className="text-xs text-stone-500">
-                  Plataforma Digital Agrícola
+                <span className="text-[11px] text-stone-500 font-medium">Web App Mobile-First</span>
+              </div>
+              <h1 className={`font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight mt-1 ${
+                sunlightMode ? 'text-yellow-400' : 'text-stone-900 dark:text-stone-100'
+              }`}>
+                AgroResiliente Inhambane
+              </h1>
+              <p className={`text-xs sm:text-sm mt-1 max-w-xl ${
+                sunlightMode ? 'text-stone-200 font-semibold' : 'text-stone-600 dark:text-stone-400'
+              }`}>
+                Assistência agronómica inteligente, diagnóstico de plantas por IA do Gemini e ferramentas de campo para Moçambique.
+              </p>
+            </div>
+
+            {/* Quick Access to Account */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => onOpenAuth('login')}
+                className={`px-3 py-2 text-xs font-bold rounded-xl border transition-colors ${
+                  sunlightMode
+                    ? 'border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black font-black'
+                    : 'border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+                }`}
+              >
+                Entrar na Conta
+              </button>
+              <button
+                type="button"
+                onClick={() => onOpenAuth('register')}
+                className={`px-3 py-2 text-xs font-bold rounded-xl shadow-xs transition-colors ${
+                  sunlightMode
+                    ? 'bg-yellow-400 text-black font-black hover:bg-yellow-300'
+                    : 'bg-emerald-700 text-white hover:bg-emerald-800'
+                }`}
+              >
+                Registo de Produtor
+              </button>
+            </div>
+          </div>
+
+          {/* TWO PRIMARY PROFILE BUTTONS: 'Sou Produtor' vs 'Sou Extensionista' */}
+          <div className="pt-2">
+            <label className={`block text-xs font-black uppercase tracking-wider mb-2 ${
+              sunlightMode ? 'text-yellow-400' : 'text-stone-700 dark:text-stone-300'
+            }`}>
+              Escolha o seu perfil de utilização:
+            </label>
+
+            <div className="grid grid-cols-2 gap-3 max-w-2xl">
+              {/* Profile 1: Sou Produtor */}
+              <button
+                type="button"
+                onClick={() => handleSelectProfile('produtor')}
+                className={`p-3.5 sm:p-4 rounded-2xl border-3 text-left transition-all flex items-center gap-3 transform active:scale-98 shadow-sm ${
+                  userProfile === 'produtor'
+                    ? sunlightMode
+                      ? 'bg-yellow-400 text-black border-yellow-400 font-black ring-4 ring-yellow-400/30'
+                      : 'bg-emerald-700 text-white border-emerald-800 ring-4 ring-emerald-500/20 shadow-md'
+                    : sunlightMode
+                      ? 'bg-stone-900 text-stone-300 border-stone-700 hover:border-yellow-400'
+                      : 'bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 border-stone-200 dark:border-stone-800 hover:border-emerald-500'
+                }`}
+              >
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                  userProfile === 'produtor'
+                    ? sunlightMode ? 'bg-black text-yellow-400' : 'bg-white/20 text-white'
+                    : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400'
+                }`}>
+                  <Sprout className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-sm sm:text-base font-extrabold block leading-tight">
+                    Sou Produtor
+                  </span>
+                  <span className={`text-[11px] block mt-0.5 ${
+                    userProfile === 'produtor'
+                      ? sunlightMode ? 'text-stone-900 font-bold' : 'text-emerald-100'
+                      : 'text-stone-500'
+                  }`}>
+                    Agricultor familiar na machamba
+                  </span>
+                </div>
+              </button>
+
+              {/* Profile 2: Sou Extensionista */}
+              <button
+                type="button"
+                onClick={() => handleSelectProfile('extensionista')}
+                className={`p-3.5 sm:p-4 rounded-2xl border-3 text-left transition-all flex items-center gap-3 transform active:scale-98 shadow-sm ${
+                  userProfile === 'extensionista'
+                    ? sunlightMode
+                      ? 'bg-yellow-400 text-black border-yellow-400 font-black ring-4 ring-yellow-400/30'
+                      : 'bg-sky-700 text-white border-sky-800 ring-4 ring-sky-500/20 shadow-md'
+                    : sunlightMode
+                      ? 'bg-stone-900 text-stone-300 border-stone-700 hover:border-yellow-400'
+                      : 'bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 border-stone-200 dark:border-stone-800 hover:border-sky-500'
+                }`}
+              >
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                  userProfile === 'extensionista'
+                    ? sunlightMode ? 'bg-black text-yellow-400' : 'bg-white/20 text-white'
+                    : 'bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-400'
+                }`}>
+                  <ClipboardList className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-sm sm:text-base font-extrabold block leading-tight">
+                    Sou Extensionista
+                  </span>
+                  <span className={`text-[11px] block mt-0.5 ${
+                    userProfile === 'extensionista'
+                      ? sunlightMode ? 'text-stone-900 font-bold' : 'text-sky-100'
+                      : 'text-stone-500'
+                  }`}>
+                    Técnico SDAE / CITT no terreno
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ACTIVE MODE DISPLAY SECTION */}
+      <section className="py-8 sm:py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          {userProfile === 'produtor' ? (
+            <ProducerMode
+              sunlightMode={sunlightMode}
+              onToggleSunlightMode={handleToggleSunlight}
+              onOpenCropGallery={handleScrollToGallery}
+            />
+          ) : (
+            <ExtensionistMode
+              onOpenCropGallery={handleScrollToGallery}
+            />
+          )}
+        </div>
+      </section>
+
+      {/* CROP FIGURES & BOTANICAL PROFILES GALLERY */}
+      <div ref={galleryRef}>
+        <CropFiguresGallery />
+      </div>
+
+      {/* USSD & SMS Simulator Section (For feature phone compatibility) */}
+      <section className="py-12 border-t border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 space-y-4">
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                  Inclusão Rural Total
                 </span>
               </div>
-
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-stone-900 dark:text-stone-100 tracking-tight leading-[1.15]">
-                Agricultura resiliente ao clima com informação, assistência técnica e mercados
-              </h1>
-
-              <p className="text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed max-w-xl">
-                Uma plataforma segura e integrada para pequenos e médios produtores familiares. Acesso por USSD e SMS para telemóveis simples, e portal web moderno com autenticação biométrica, 2FA, modo escuro e exportação de relatórios em PDF.
+              <h2 className="font-display text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100">
+                Canal USSD *123# e SMS para Telemóveis Básicos
+              </h2>
+              <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+                Produtores sem smartphone ou sem dados de internet podem consultar cotações e alertas através do código USSD gratuito ou enviar comandos SMS para qualquer rede nacional (TMCEL, Vodacom e Movitel).
               </p>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex items-center gap-3 pt-2">
                 <button
-                  onClick={() => onOpenAuth('login')}
-                  className="px-5 py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-sm shadow-emerald-700/20 transition-all"
+                  type="button"
+                  onClick={() => setActiveChannel('ussd')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                    activeChannel === 'ussd'
+                      ? 'bg-emerald-700 text-white border-emerald-700'
+                      : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-300 dark:border-stone-700'
+                  }`}
                 >
-                  <span>Entrar com Biometria & 2FA</span>
-                  <ArrowRight className="w-4 h-4" />
+                  Simulador USSD (*123#)
                 </button>
-
                 <button
-                  onClick={() => onOpenAuth('register')}
-                  className="px-5 py-3 rounded-xl bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-800 dark:text-stone-200 font-semibold text-xs sm:text-sm transition-colors"
+                  type="button"
+                  onClick={() => setActiveChannel('sms')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors ${
+                    activeChannel === 'sms'
+                      ? 'bg-emerald-700 text-white border-emerald-700'
+                      : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-300 dark:border-stone-700'
+                  }`}
                 >
-                  Criar Conta Grátis
+                  Simulador SMS Interativo
                 </button>
-
-                <button
-                  onClick={onOpenTestRunner}
-                  className="px-4 py-3 rounded-xl text-stone-600 dark:text-stone-400 hover:text-emerald-700 dark:hover:text-emerald-400 text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5"
-                >
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>Testes Automatizados</span>
-                </button>
-              </div>
-
-              {/* Trust Indicators */}
-              <div className="pt-4 border-t border-stone-200 dark:border-stone-800 grid grid-cols-3 gap-4 text-left">
-                <div>
-                  <span className="font-display text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 tabular-nums">
-                    2.500+
-                  </span>
-                  <p className="text-[11px] text-stone-500 mt-0.5">Produtores no Piloto</p>
-                </div>
-                <div>
-                  <span className="font-display text-xl sm:text-2xl font-bold text-emerald-700 dark:text-emerald-400 tabular-nums">
-                    100%
-                  </span>
-                  <p className="text-[11px] text-stone-500 mt-0.5">Suporte Offline</p>
-                </div>
-                <div>
-                  <span className="font-display text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 tabular-nums">
-                    MFA / 2FA
-                  </span>
-                  <p className="text-[11px] text-stone-500 mt-0.5">Proteção Bancária</p>
-                </div>
               </div>
             </div>
 
-            {/* Right Column: Interactive Phone Preview */}
+            {/* Interactive Simulator Phone */}
             <div className="lg:col-span-5 flex justify-center">
               <div className="w-full max-w-xs bg-stone-950 border-8 border-stone-800 rounded-[36px] p-5 shadow-2xl relative overflow-hidden">
                 <div className="w-20 h-4 bg-stone-800 rounded-full mx-auto mb-4" />
-                <div className="bg-stone-900 border border-stone-800/80 rounded-2xl p-4 min-h-[220px] text-emerald-400 font-mono text-xs whitespace-pre-wrap leading-relaxed">
-                  {ussdScreens[ussdPath] || ussdScreens.root}
-                </div>
+                
+                {activeChannel === 'ussd' ? (
+                  <>
+                    <div className="bg-stone-900 border border-stone-800/80 rounded-2xl p-4 min-h-[200px] text-emerald-400 font-mono text-xs whitespace-pre-wrap leading-relaxed">
+                      {ussdScreens[ussdPath] || ussdScreens.root}
+                    </div>
 
-                {/* Keypad */}
-                <div className="grid grid-cols-3 gap-2 mt-4">
-                  {['1', '2', '3', '4', '5', '6'].map(n => (
-                    <button
-                      key={n}
-                      onClick={() => handleUssdClick(n)}
-                      className="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 font-bold text-xs transition-colors border border-stone-800/80"
-                    >
-                      {n}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => handleUssdClick('0')}
-                    className="col-span-3 p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 font-bold text-xs transition-colors border border-stone-800/80"
-                  >
-                    0 · Início *123#
-                  </button>
-                </div>
-
-                <div className="mt-3 text-center">
-                  <span className="text-[10px] text-stone-500 font-mono">
-                    USSD Simulado · Sem consumo de dados
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Agricultural Crop Figures Gallery Section */}
-      <section className="py-16 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <CropFiguresGallery onSelectCrop={() => onOpenAuth('register')} />
-        </div>
-      </section>
-
-      {/* Security & Authentication Pillar Section */}
-      <section className="py-16 bg-stone-100/60 dark:bg-stone-900/40 border-b border-stone-200 dark:border-stone-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
-              Segurança Robusta de Ponta a Ponta
-            </span>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100 mt-1">
-              Proteção moderna para cada produtor familiar
-            </h2>
-            <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-2">
-              Privacidade dos dados das machambas, integração com M-Pesa e validação biométrica sem complicação.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mb-4">
-                <Fingerprint className="w-5 h-5" />
-              </div>
-              <h3 className="font-display text-base font-bold text-stone-900 dark:text-stone-100 mb-2">
-                Biometria & Passkeys FIDO2
-              </h3>
-              <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
-                Aceda com a impressão digital ou reconhecimento facial do seu telemóvel. Compatível com Touch ID, Face ID e sensores Android.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mb-4">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <h3 className="font-display text-base font-bold text-stone-900 dark:text-stone-100 mb-2">
-                Autenticação de 2 Factores (2FA)
-              </h3>
-              <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
-                Camada adicional de proteção com código TOTP de 6 dígitos, SMS para a rede Vodacom/Movitel e códigos de emergência para backup.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mb-4">
-                <FileCheck className="w-5 h-5" />
-              </div>
-              <h3 className="font-display text-base font-bold text-stone-900 dark:text-stone-100 mb-2">
-                Relatórios Oficiais em PDF
-              </h3>
-              <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
-                Exporte certificados de segurança, códigos de emergência e boletins diários de cotações de mercado diretamente para PDF num clique.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Channel Switcher (USSD / SMS) Section */}
-      <section className="py-16 border-b border-stone-200 dark:border-stone-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-            <div>
-              <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">
-                Canais Sem Internet
-              </span>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold text-stone-900 dark:text-stone-100 mt-1">
-                USSD (*123#) e SMS (123)
-              </h2>
-              <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
-                Funciona em qualquer telemóvel simples sem consumir o saldo de dados.
-              </p>
-            </div>
-
-            {/* Channel Tabs */}
-            <div className="flex p-1 bg-stone-100 dark:bg-stone-800 rounded-xl self-start">
-              <button
-                onClick={() => setActiveChannel('ussd')}
-                className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                  activeChannel === 'ussd'
-                    ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                    : 'text-stone-500'
-                }`}
-              >
-                Canal USSD *123#
-              </button>
-              <button
-                onClick={() => setActiveChannel('sms')}
-                className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                  activeChannel === 'sms'
-                    ? 'bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 shadow-xs'
-                    : 'text-stone-500'
-                }`}
-              >
-                Canal SMS 123
-              </button>
-            </div>
-          </div>
-
-          {activeChannel === 'ussd' ? (
-            <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h3 className="font-display text-lg font-bold text-stone-900 dark:text-stone-100 mb-2">
-                  Navegação no Menu USSD
-                </h3>
-                <p className="text-xs text-stone-500 mb-4 leading-relaxed">
-                  Digite *123# no teclado de chamada para aceder a preços em tempo real de 12 culturas agrícolas nos mercados de Homoíne, Maxixe, Inhambane e Massinga.
-                </p>
-                <ul className="space-y-2 text-xs text-stone-600 dark:text-stone-400">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Disponível 24/7 sem necessidade de internet</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Suporte em Português, Bitonga e Xitswa</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>Contacto direto com extensionistas de campo</span>
-                  </li>
-                </ul>
-                <div className="mt-6 flex gap-3">
-                  <button
-                    onClick={() => onOpenAuth('login')}
-                    className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold"
-                  >
-                    Entrar no Portal Web
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex justify-center">
-                <div className="w-full max-w-xs bg-stone-950 border-4 border-stone-800 rounded-3xl p-4 shadow-xl">
-                  <div className="bg-stone-900 border border-stone-800 rounded-xl p-3 min-h-[170px] text-emerald-400 font-mono text-xs whitespace-pre-wrap">
-                    {ussdScreens[ussdPath] || ussdScreens.root}
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 mt-3">
-                    {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k => (
+                    <div className="grid grid-cols-3 gap-2 mt-4">
+                      {['1', '2', '3', '4', '5', '6'].map(n => (
+                        <button
+                          key={n}
+                          onClick={() => handleUssdClick(n)}
+                          className="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 font-bold text-xs transition-colors border border-stone-800/80"
+                        >
+                          {n}
+                        </button>
+                      ))}
                       <button
-                        key={k}
-                        onClick={() => handleUssdClick(k)}
-                        className="p-2 rounded-lg bg-stone-900 text-stone-200 font-bold text-xs hover:bg-stone-800"
+                        onClick={() => handleUssdClick('0')}
+                        className="col-span-3 p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 font-bold text-xs transition-colors border border-stone-800/80"
                       >
-                        {k}
+                        0 · Início *123#
                       </button>
-                    ))}
-                    <button
-                      onClick={() => handleUssdClick('0')}
-                      className="col-span-3 p-2 rounded-lg bg-stone-900 text-stone-200 font-bold text-xs hover:bg-stone-800"
-                    >
-                      0 · Início
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="p-6 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div>
-                <h3 className="font-display text-lg font-bold text-stone-900 dark:text-stone-100 mb-2">
-                  Consultas Rápidas por SMS
-                </h3>
-                <p className="text-xs text-stone-500 mb-4 leading-relaxed">
-                  Envie mensagens com palavras-chave simples para o número <strong>123</strong> e receba a resposta instantânea.
-                </p>
-                <div className="space-y-2 text-xs">
-                  <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700/60 flex items-center justify-between">
-                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">PRECO milho</span>
-                    <span className="text-stone-500">Cotação do milho em Homoíne e Maxixe</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700/60 flex items-center justify-between">
-                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">ALERTA</span>
-                    <span className="text-stone-500">Avisos climáticos e risco de pragas</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700/60 flex items-center justify-between">
-                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">DICA solo</span>
-                    <span className="text-stone-500">Técnicas de compostagem e mulching</span>
-                  </div>
-                </div>
-              </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="bg-stone-900 rounded-2xl p-3 h-48 overflow-y-auto space-y-2 text-xs">
+                      {smsLog.map((msg, i) => (
+                        <div
+                          key={i}
+                          className={`p-2 rounded-xl max-w-[85%] text-[11px] leading-tight ${
+                            msg.direction === 'out'
+                              ? 'ml-auto bg-emerald-700 text-white'
+                              : 'mr-auto bg-stone-800 text-stone-200'
+                          }`}
+                        >
+                          {msg.text}
+                        </div>
+                      ))}
+                    </div>
 
-              <div className="flex justify-center">
-                <div className="w-full max-w-xs bg-stone-950 border-4 border-stone-800 rounded-3xl overflow-hidden shadow-xl flex flex-col">
-                  <div className="p-2.5 bg-stone-900 border-b border-stone-800 text-center text-xs font-bold text-stone-200">
-                    SMS · 123 (AgroResiliente)
-                  </div>
-                  <div className="p-3 h-48 overflow-y-auto space-y-2 text-xs bg-stone-950">
-                    {smsLog.map((msg, i) => (
-                      <div
-                        key={i}
-                        className={`max-w-[85%] p-2 rounded-xl text-xs ${
-                          msg.direction === 'out'
-                            ? 'ml-auto bg-emerald-700 text-white rounded-br-xs'
-                            : 'mr-auto bg-stone-800 text-stone-200 rounded-bl-xs'
-                        }`}
+                    <div className="flex gap-1.5">
+                      <input
+                        type="text"
+                        value={smsInput}
+                        onChange={e => setSmsInput(e.target.value)}
+                        placeholder="Ex: PRECO milho"
+                        className="flex-1 px-2.5 py-1.5 bg-stone-900 border border-stone-700 rounded-xl text-white text-xs outline-none"
+                      />
+                      <button
+                        onClick={() => handleSmsSend()}
+                        className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl"
                       >
-                        {msg.text}
-                      </div>
-                    ))}
+                        Enviar
+                      </button>
+                    </div>
                   </div>
-                  <div className="p-2 bg-stone-900 border-t border-stone-800 flex gap-2">
-                    <input
-                      type="text"
-                      value={smsInput}
-                      onChange={e => setSmsInput(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter') handleSmsSend(); }}
-                      placeholder="Ex: ALERTA"
-                      className="flex-1 px-3 py-1 bg-stone-950 border border-stone-800 rounded-lg text-xs text-stone-200 outline-none"
-                    />
-                    <button
-                      onClick={() => handleSmsSend()}
-                      className="px-3 py-1 bg-emerald-700 text-white rounded-lg text-xs font-semibold"
-                    >
-                      Enviar
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
-          )}
+          </div>
+        </div>
+      </section>
+
+      {/* Security & Integrated Testing CTA */}
+      <section className="py-10 border-t border-stone-200 dark:border-stone-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-stone-900 dark:text-stone-100">
+                Segurança Biométrica e Autenticação Multifator
+              </h4>
+              <p className="text-[11px] text-stone-500">
+                Padrão FIDO2/WebAuthn e conformidade com WCAG AA para navegação acessível.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onOpenTestRunner}
+            className="px-4 py-2 rounded-xl text-xs font-bold border border-stone-300 dark:border-stone-700 hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300 transition-colors flex items-center gap-2 shrink-0"
+          >
+            <span>Executar Bateria de Testes CI/CD</span>
+          </button>
         </div>
       </section>
     </div>

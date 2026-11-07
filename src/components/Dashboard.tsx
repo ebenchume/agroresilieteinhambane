@@ -25,7 +25,9 @@ import {
   Bug,
   Calculator,
   BarChart3,
-  Compass
+  Compass,
+  Camera,
+  ClipboardList
 } from 'lucide-react';
 import { User, AuditLog, MarketPrice } from '../types/auth';
 import { StorageService } from '../services/storage';
@@ -42,6 +44,10 @@ import { ProductivityChartSection } from './ProductivityChartSection';
 import { AgroResilientTips } from './AgroResilientTips';
 import { CropFiguresGallery } from './CropFiguresGallery';
 import { INHAMBANE_CROPS } from '../assets/crops';
+import { ProducerMode } from './producer/ProducerMode';
+import { ExtensionistMode } from './extensionist/ExtensionistMode';
+import { MobileService } from '../services/mobileService';
+import { UserProfileType } from '../types/mobileApp';
 
 interface DashboardProps {
   user: User;
@@ -58,7 +64,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
   marketPrices,
   onShowToast
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+  const [dashProfile, setDashProfile] = useState<UserProfileType>(() => MobileService.getUserProfile());
+  const [dashSunlight, setDashSunlight] = useState<boolean>(() => MobileService.getSunlightMode());
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => StorageService.getAuditLogs());
   const [showBackupCodes, setShowBackupCodes] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -333,6 +341,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('mobile-app')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shadow-xs ${
+            activeTab === 'mobile-app'
+              ? 'bg-emerald-700 text-white dark:bg-emerald-600 ring-2 ring-emerald-500/40'
+              : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60'
+          }`}
+        >
+          <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+          <span>App Mobile · Produtor & Extensionista</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('crop-figures')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'crop-figures'
@@ -480,6 +501,74 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </button>
       </div>
 
+      {/* TAB MOBILE APP: PRODUTOR & EXTENSIONISTA */}
+      {activeTab === 'mobile-app' && (
+        <div className="space-y-6">
+          {/* Profile Switcher Bar */}
+          <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                Seletor de Modo Operacional
+              </span>
+              <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                Alternar entre Modo Produtor e Modo Extensionista
+              </h3>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setDashProfile('produtor');
+                  MobileService.setUserProfile('produtor');
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  dashProfile === 'produtor'
+                    ? 'bg-emerald-700 text-white shadow-sm'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+                }`}
+              >
+                <Sprout className="w-4 h-4" />
+                <span>Sou Produtor</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setDashProfile('extensionista');
+                  MobileService.setUserProfile('extensionista');
+                }}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  dashProfile === 'extensionista'
+                    ? 'bg-sky-700 text-white shadow-sm'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+                }`}
+              >
+                <ClipboardList className="w-4 h-4" />
+                <span>Sou Extensionista</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Render chosen mode */}
+          {dashProfile === 'produtor' ? (
+            <ProducerMode
+              sunlightMode={dashSunlight}
+              onToggleSunlightMode={() => {
+                const n = !dashSunlight;
+                setDashSunlight(n);
+                MobileService.setSunlightMode(n);
+              }}
+              onOpenCropGallery={() => setActiveTab('crop-figures')}
+            />
+          ) : (
+            <ExtensionistMode
+              onOpenCropGallery={() => setActiveTab('crop-figures')}
+            />
+          )}
+        </div>
+      )}
+
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
         <div className="space-y-6">
@@ -581,6 +670,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('mobile-app')}
+                    className="mt-3 w-full py-2 px-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>Diagnosticar Planta / Modo Mobile</span>
+                  </button>
                 </div>
               );
             })()}

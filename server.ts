@@ -13,7 +13,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
 // Initialize Google GenAI with recommended telemetry header
 const ai = new GoogleGenAI({
@@ -349,6 +350,366 @@ Identifique a praga ou doença mais provável, determine a confiança do diagnó
       success: true,
       data: {
         ...generateFallbackDiagnosis(),
+        crop,
+        zone,
+        generatedWith: 'knowledge-base-fallback',
+        errorDetails: error.message,
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+});
+
+// Fallback diagnostics by crop for photo analysis
+const PHOTO_DIAGNOSTICS_FALLBACK: Record<string, any> = {
+  milho: {
+    cropIdentified: 'Milho (Zea mays)',
+    problemTitle: 'Ataque de Lagarta-do-Cartucho (Spodoptera frugiperda)',
+    severity: 'Média',
+    simpleExplanation: 'A sua planta de milho tem marcas de roeduras e serradura no olho do cartucho. São lagartas pequenas que comem as folhas novas enquanto ainda estão enroladas.',
+    whatToDoToday: [
+      'Vá à machamba de manhã cedo enquanto o milho ainda tem orvalho.',
+      'Abra devagar o cartucho das plantas com furos e retire as lagartas à mão se forem poucas.',
+      'Deite uma pitada de cinza de lenha peneirada misturada com areia no centro do cartucho.',
+      'Avise os vizinhos para também olharem o milho deles antes que a praga se espalhe.'
+    ],
+    homeRemedy: {
+      name: 'Pó Protetor de Cinza com Areia de Rio',
+      recipe: '2 copos de cinza fria bem peneirada + 1 copo de areia fina de rio + 1 colher de malagueta seca moída.',
+      application: 'Deite uma pitadinha directamente dentro do olho de cada planta atacada. A cinza sufoca a lagarta sem gastar dinheiro com remédios caros.'
+    },
+    preventNextTime: [
+      'Plante feijão nhemba ou amendoim no meio das linhas de milho (o cheiro afasta as borboletas da praga).',
+      'Faça a sementeira logo nas primeiras chuvas de Outubro/Novembro para o milho crescer forte antes do pico da praga.'
+    ],
+    localTip: 'Mavele ya vupfa hi ku hlayisa — O milho só dá maçarocas bonitas quando cuidamos dele com paciência todos os dias (Xitswa).'
+  },
+  mandioca: {
+    cropIdentified: 'Mandioca (Manihot esculenta)',
+    problemTitle: 'Sinais de Mosaico Africano e Stress Hídrico',
+    severity: 'Média',
+    simpleExplanation: 'As folhas da mandioca mostram partes amarelas e enrugadas. Isto acontece por causa do vírus do mosaico trazido pela mosquinha branca e pelo calor forte com pouca chuva.',
+    whatToDoToday: [
+      'Se a planta estiver muito fraca e torcida, arranque pela raiz e deixe secar ao sol fora da machamba.',
+      'Não tire ramas dessa planta doente para plantar noutro canteiro.',
+      'Coloque palha seca ou capim na base dos pés para guardar a frescura da terra (mulching).',
+      'Pulverize água de sabão azul com alho no verso das folhas para afastar as mosquinhas brancas.'
+    ],
+    homeRemedy: {
+      name: 'Calda Repelente de Alho e Sabão Azul',
+      recipe: '3 cabeças de alho esmagadas + 1 colher de raspas de sabão azul derretidas em 5 litros de água morna.',
+      application: 'Coe num pano limpo e pulverize no verso das folhas de manhã bem cedo, 2 vezes por semana.'
+    },
+    preventNextTime: [
+      'Peça estacas limpas de variedades tolerantes como a Chinamuna no posto do SDAE ou CITT.',
+      'Faça camalhões mais altos para reter a humidade do orvalho da noite.'
+    ],
+    localTip: 'Chinamuna a nga chavi dyambu — A boa mandioca não teme o sol quando tem boa cobertura no solo (Bitonga).'
+  },
+  amendoim: {
+    cropIdentified: 'Amendoim (Arachis hypogaea)',
+    problemTitle: 'Mancha Castanha nas Folhas (Cercosporiose)',
+    severity: 'Baixa',
+    simpleExplanation: 'As folhas do amendoim estão com pequenos pontos escuros com auréola amarelada. É uma mancha provocada por humidade acumulada na folhagem nas noites quentes.',
+    whatToDoToday: [
+      'Não regue as folhas à tarde ou à noite; a água deve ir directo para a terra ao pé da raiz.',
+      'Afofe suavemente a terra ao redor da planta para que os pregos (ginóforos) entrem na terra solta.',
+      'Remova as folhas secas caídas no chão para não guardarem o fungo.'
+    ],
+    homeRemedy: {
+      name: 'Bio-fertilizante de Cinza e Camomila Silvestre',
+      recipe: '1 copo de cinza vegetal misturado em 10 litros de água limpa; deixar assentar por 12 horas.',
+      application: 'Regue a base do caule com a água clara. O potássio da cinza dá força à casca da vagem subterrânea.'
+    },
+    preventNextTime: [
+      'Faça rotação: não plante amendoim duas épocas seguidas no mesmo bocado de terra.',
+      'Guarde as sementes em sacos pendurados longe da humidade do chão para evitar bolor e aflatoxina.'
+    ],
+    localTip: 'Muruwa wu lava misava yo olova — O amendoim precisa de terra leve e fofa para dar muitas vagens cheias (Xitswa).'
+  },
+  caju: {
+    cropIdentified: 'Cajueiro (Anacardium occidentale)',
+    problemTitle: 'Oídio e Envelhecimento dos Rebentos Florais',
+    severity: 'Média',
+    simpleExplanation: 'As flores e folhas jovens do cajueiro mostram uma poeira esbranquiçada ou acinzentada. Isso queima a florada e faz a maçã e a castanha caírem antes do tempo.',
+    whatToDoToday: [
+      'Faça poda de limpeza: corte os ramos secos ou entrelaçados para o vento e o sol entrarem bem no meio da copa.',
+      'Limpe o mato ao redor do tronco do cajueiro num círculo de 2 metros (fazer caldeira limpa).',
+      'Queime ou enterre os ramos doentes longe dos cajueiros sãos.'
+    ],
+    homeRemedy: {
+      name: 'Pulverização de Enxofre Molhável ou Calda com Leite Azedo',
+      recipe: '1 litro de leite azedo ou soro + 9 litros de água + 20g de cinza filtrada.',
+      application: 'Pulverize a copa nos dias frescos sem vento forte. O leite reduz a multiplicação do fungo do oídio.'
+    },
+    preventNextTime: [
+      'Inicie a limpeza da copa em Maio/Junho, antes da emissão das panículas florais.',
+      'Procure o técnico do SDAE para o programa provincial de pulverização de cajueiros de Inhambane.'
+    ],
+    localTip: 'Mkanju wu hlayisiwe hi nkarhi — O cajueiro bem podado no tempo certo enche o cesto de castanha (Bitonga).'
+  }
+};
+
+// POST /api/gemini/analyze-photo
+app.post('/api/gemini/analyze-photo', async (req, res) => {
+  const { imageBase64, mimeType = 'image/jpeg', cropHint = '', location = 'Inhambane, Moçambique', farmerNotes = '' } = req.body;
+
+  // Resolve matching fallback based on crop hint or default to milho
+  const hintKey = (cropHint || '').toLowerCase();
+  let matchedFallbackKey = 'milho';
+  if (hintKey.includes('mandioca') || hintKey.includes('cassava')) matchedFallbackKey = 'mandioca';
+  else if (hintKey.includes('amendoim') || hintKey.includes('peanut')) matchedFallbackKey = 'amendoim';
+  else if (hintKey.includes('caju') || hintKey.includes('cashew')) matchedFallbackKey = 'caju';
+  else if (hintKey.includes('milho') || hintKey.includes('maize')) matchedFallbackKey = 'milho';
+
+  const fallbackData = PHOTO_DIAGNOSTICS_FALLBACK[matchedFallbackKey] || PHOTO_DIAGNOSTICS_FALLBACK['milho'];
+
+  // Check if API key or image is present
+  if (!process.env.GEMINI_API_KEY || !imageBase64) {
+    console.info('No GEMINI_API_KEY or image provided, returning verified agronomic diagnosis fallback.');
+    return res.json({
+      success: true,
+      data: {
+        ...fallbackData,
+        generatedWith: 'knowledge-base',
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+
+  try {
+    // Clean base64 string
+    const cleanBase64 = imageBase64.replace(/^data:image\/[a-zA-Z]+;base64,/, '');
+
+    const promptText = `É um Engenheiro Agrónomo e Extensionista do SDAE (Serviços Distritais de Actividades Económicas) na Província de Inhambane, Moçambique.
+Analise detalhadamente a foto desta planta cultivada por um pequeno produtor familiar.
+Culturas prioritárias da região: Milho, Mandioca, Amendoim e Castanha de Caju.
+${cropHint ? `Cultura indicada pelo agricultor: ${cropHint}.` : ''}
+${farmerNotes ? `Nota do agricultor: "${farmerNotes}".` : ''}
+Localidade: ${location}.
+
+Responda em PORTUGUÊS SIMPLES DE MOÇAMBIQUE, com linguagem clara, acolhedora e direta (como fala um bom extensionista na machamba).
+Identifique com precisão se a planta tem pragas (ex: lagarta-do-cartucho, broca, mosca-branca), doenças (ex: mosaico africano, oídio, cercosporiose), falta de água/seca ou se está saudável.
+Forneça remédios caseiros práticos e de custo quase zero (cinza vegetal, areia, mulching, sabão azul, calda de alho/neem).
+
+Formato JSON estrito:
+{
+  "cropIdentified": "Nome da cultura (ex: Milho, Mandioca, Amendoim, Caju, ou outra)",
+  "problemTitle": "Título simples do que foi identificado",
+  "severity": "Baixa" | "Média" | "Grave" | "Planta Sã",
+  "simpleExplanation": "2 a 3 frases em português simples de Moçambique explicando o que aconteceu à planta",
+  "whatToDoToday": ["Ação imediata 1", "Ação imediata 2", "Ação imediata 3"],
+  "homeRemedy": {
+    "name": "Nome do remédio caseiro fácil",
+    "recipe": "Ingredientes e medidas caseiras",
+    "application": "Como e quando aplicar na planta"
+  },
+  "preventNextTime": ["Cuidado preventivo 1", "Cuidado preventivo 2"],
+  "localTip": "Provérbio ou conselho amigável em Xitswa ou Bitonga com a tradução em português"
+}`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              inlineData: {
+                mimeType: mimeType || 'image/jpeg',
+                data: cleanBase64
+              }
+            },
+            {
+              text: promptText
+            }
+          ]
+        }
+      ],
+      config: {
+        systemInstruction: 'É um especialista agrónomo dedicado aos produtores familiares de Inhambane, Moçambique. Use linguagem simples, empática e encorajadora em português de Moçambique.',
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            cropIdentified: { type: Type.STRING },
+            problemTitle: { type: Type.STRING },
+            severity: { type: Type.STRING },
+            simpleExplanation: { type: Type.STRING },
+            whatToDoToday: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            },
+            homeRemedy: {
+              type: Type.OBJECT,
+              properties: {
+                name: { type: Type.STRING },
+                recipe: { type: Type.STRING },
+                application: { type: Type.STRING }
+              },
+              required: ['name', 'recipe', 'application']
+            },
+            preventNextTime: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            },
+            localTip: { type: Type.STRING }
+          },
+          required: ['cropIdentified', 'problemTitle', 'severity', 'simpleExplanation', 'whatToDoToday', 'homeRemedy', 'preventNextTime', 'localTip']
+        }
+      }
+    });
+
+    const text = response.text;
+    if (!text) throw new Error('Resposta vazia da API do Gemini.');
+
+    const parsedData = JSON.parse(text);
+    return res.json({
+      success: true,
+      data: {
+        ...parsedData,
+        generatedWith: 'gemini-3.8-flash',
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error: any) {
+    console.error('Gemini API Error in /api/gemini/analyze-photo:', error);
+    return res.json({
+      success: true,
+      data: {
+        ...fallbackData,
+        generatedWith: 'knowledge-base-fallback',
+        errorDetails: error.message,
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+});
+
+// POST /api/gemini/ask-agronomist
+app.post('/api/gemini/ask-agronomist', async (req, res) => {
+  const { question = '', crop = 'Geral', zone = 'Homoíne, Inhambane' } = req.body;
+
+  if (!question.trim()) {
+    return res.status(400).json({ success: false, error: 'Pergunta não informada.' });
+  }
+
+  // Fallback agricultural responses
+  const getFallbackAnswer = (q: string) => {
+    const qL = q.toLowerCase();
+    if (qL.includes('seca') || qL.includes('chuva') || qL.includes('água') || qL.includes('agua')) {
+      return {
+        answer: 'Para enfrentar a seca em Inhambane (especialmente em zonas de solo arenoso como Panda e Homoíne), a regra de ouro é nunca deixar o solo nu. Coloque uma camada grossa de 5 a 10 cm de palha seca ou capim cortado (mulching) ao redor das plantas. Isto reduz a perda de água pelo calor do sol em mais de 40%. Além disso, faça covas de plantio com matéria orgânica curtida no fundo para guardar o orvalho da noite.',
+        practicalSteps: [
+          'Cubra a terra com capim ou folhas secas hoje mesmo.',
+          'Regue apenas de manhã cedo (entre as 5h30 e 7h00) ou ao entardecer.',
+          'Crie pequenas bacias de terra ao pé da planta para a água não escorrer.',
+          'Prefira variedades com raízes fundas como milho Matuba e mandioca Chinamuna.'
+        ],
+        localWisdom: 'Mati ya nkarhi ma tlula nsati wa xikaya — A água aproveitada na hora certa vale mais que qualquer riqueza.'
+      };
+    } else if (qL.includes('lagarta') || qL.includes('milho')) {
+      return {
+        answer: 'A lagarta-do-cartucho ataca o milho jovem logo após a germinação. Se o ataque for no início, não gaste dinheiro com venenos químicos caros que matam também os insetos amigos. Use cinza de madeira fria e peneirada misturada com areia fina de rio em partes iguais. Deite uma pitadinha no olho do milho de manhã cedo quando ainda tem orvalho. A cinza entra no cartucho e sufoca a lagarta.',
+        practicalSteps: [
+          'Inspeccione os cartuchos das plantas todos os dias de manhã.',
+          'Aplique a mistura de cinza e areia nas plantas com furinhos.',
+          'Plante feijão nhemba entre as linhas de milho para repelir as traças adultas.',
+          'Se a infestação passar de 2 em cada 10 plantas, avise o técnico do SDAE.'
+        ],
+        localWisdom: 'Loko u vona mavele ma dlayiwa hi switsotswana, vuyela eka ndzilo u teka nkuma — Quando vires o milho a sofrer com pragas, vai à fogueira buscar a cinza que cura.'
+      };
+    } else if (qL.includes('mandioca') || qL.includes('rama') || qL.includes('estaca')) {
+      return {
+        answer: 'Para a mandioca produzir batatas grossas e sãs em solos de Inhambane, o segredo está na escolha das ramas (manivas). Use apenas o terço médio de plantas maduras que nunca mostraram folhas torcidas de mosaico. Corte estacas com 20 a 25 cm (com 4 a 6 gemas) com facão bem afiado para não esmagar a casca. Plante deitadas ou inclinadas a 45 graus em camalhões bem arejados.',
+        practicalSteps: [
+          'Guarde as ramas à sombra de árvores frondosas na vertical se for esperar a chuva.',
+          'Evite queimar a terra da machamba; enterre as folhas secas para virarem adubo.',
+          'Mantenha o compasso de 1 metro entre plantas e 1 metro entre camalhões.'
+        ],
+        localWisdom: 'Mihanja ya mandioca i pfumo ra le ndlwini — As estacas de mandioca são o escudo que protege a família da fome.'
+      };
+    } else {
+      return {
+        answer: `Nas condições de Inhambane (${zone}), o sucesso na machamba familiar vem do maneio agroecológico: proteger a terra com matéria vegetal, consorciar leguminosas (amendoim ou feijão nhemba) com cereais (milho) para repor nutrientes, e vigiar semanalmente as plantas para agir logo ao primeiro sinal de pragas.`,
+        practicalSteps: [
+          'Adube as covas com estrume de cabrito ou galinha bem seco e curtido.',
+          'Faça rotação anual de talhões para quebrar ciclos de fungos e insetos.',
+          'Partilhe com a associação de produtores local as sementes que melhor aguentaram a última estiagem.'
+        ],
+        localWisdom: 'Ku rima i ku tsaka loku u rima hi vutlhari — A machamba dá alegria quando é trabalhada com sabedoria e cooperação.'
+      };
+    }
+  };
+
+  if (!process.env.GEMINI_API_KEY) {
+    return res.json({
+      success: true,
+      data: {
+        ...getFallbackAnswer(question),
+        question,
+        crop,
+        zone,
+        generatedWith: 'knowledge-base',
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+
+  try {
+    const prompt = `É um Engenheiro Agrónomo extensionista de Inhambane, Moçambique.
+Um produtor familiar da localidade de ${zone} (cultura: ${crop}) fez-lhe a seguinte pergunta em relação à sua machamba:
+"${question}"
+
+Responda em PORTUGUÊS SIMPLES DE MOÇAMBIQUE, com clareza, empatia, tom encorajador e instruções práticas que qualquer camponês possa aplicar hoje com os recursos da zona.
+Retorne um JSON com:
+- answer: Explicação simples e amigável (1 a 2 parágrafos)
+- practicalSteps: 3 a 4 passos práticos e objetivos
+- localWisdom: Um conselho tradicional ou provérbio agrícola em Xitswa ou Bitonga com a devida tradução para português.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents: prompt,
+      config: {
+        systemInstruction: 'É um Doutor Agrónomo que trabalha lado a lado com os camponeses de Moçambique. Linguagem simples, acolhedora, sem termos difíceis.',
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            answer: { type: Type.STRING },
+            practicalSteps: {
+              type: Type.ARRAY,
+              items: { type: Type.STRING }
+            },
+            localWisdom: { type: Type.STRING }
+          },
+          required: ['answer', 'practicalSteps', 'localWisdom']
+        }
+      }
+    });
+
+    const text = response.text;
+    if (!text) throw new Error('Resposta vazia da API.');
+
+    const parsed = JSON.parse(text);
+    return res.json({
+      success: true,
+      data: {
+        ...parsed,
+        question,
+        crop,
+        zone,
+        generatedWith: 'gemini-3.8-flash',
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error: any) {
+    console.error('Gemini API Error in /api/gemini/ask-agronomist:', error);
+    return res.json({
+      success: true,
+      data: {
+        ...getFallbackAnswer(question),
+        question,
         crop,
         zone,
         generatedWith: 'knowledge-base-fallback',
