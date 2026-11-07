@@ -13,6 +13,7 @@ import {
 import { AppNotification } from '../types/auth';
 import { NotificationsService } from '../services/notifications';
 import { StorageService } from '../services/storage';
+import { AriaModal } from './AriaModal';
 
 interface NotificationCenterProps {
   isOpen: boolean;
@@ -79,26 +80,21 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center sm:justify-end sm:items-start p-4 sm:p-6 bg-stone-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div 
-        className="w-full max-w-sm sm:max-w-md bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 p-5 max-h-[85vh] flex flex-col relative sm:mt-12"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
-          <div className="flex items-center gap-2">
-            <Bell className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-            <h3 className="font-semibold text-stone-900 dark:text-stone-100 text-sm">
-              Centro de Alertas & Push
-            </h3>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-lg"
-          >
-            <X className="w-4 h-4" />
-          </button>
+    <AriaModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Centro de Alertas & Push"
+      maxWidth="max-w-md"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
+        <div className="flex items-center gap-2">
+          <Bell className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
+          <h3 className="font-semibold text-stone-900 dark:text-stone-100 text-sm">
+            Centro de Alertas & Push
+          </h3>
         </div>
+      </div>
 
         {/* Browser Permission Banner */}
         {permission !== 'granted' && (
@@ -224,7 +220,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             ))
           )}
         </div>
-      </div>
-    </div>
+    </AriaModal>
   );
 };

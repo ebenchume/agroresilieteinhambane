@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { StorageService } from '../services/storage';
 import { User, SocialProvider } from '../types/auth';
+import { AriaTextField } from './AriaTextField';
 
 interface LoginFormProps {
   onSuccessLogin: (user: User, authMethod: 'password' | 'biometric' | 'social' | '2fa') => void;
@@ -122,58 +123,49 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       {/* Main Login Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Identifier: Phone or Email */}
-        <div>
-          <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1.5">
-            Telemóvel (M-Pesa / e-Mola) ou E-mail
-          </label>
-          <div className="relative">
-            <input
-              type="text"
-              required
-              value={identifier}
-              onChange={e => setIdentifier(e.target.value)}
-              placeholder="Ex: 84xxxxxxx ou produtor@exemplo.com"
-              autoComplete="username"
-              className="w-full pl-9 pr-3.5 py-2.5 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
-            />
-            <UserIcon className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
-          </div>
-        </div>
+        <AriaTextField
+          label="Telemóvel (M-Pesa / e-Mola) ou E-mail"
+          name="identifier"
+          required
+          value={identifier}
+          onChange={setIdentifier}
+          placeholder="Ex: 84xxxxxxx ou produtor@exemplo.com"
+          autoComplete="username"
+          icon={<UserIcon className="w-4 h-4 text-stone-400" />}
+        />
 
         {/* Password */}
         <div>
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">
-              Palavra-passe
-            </label>
+          <div className="flex justify-end mb-1">
             <button
               type="button"
               onClick={onRequestRecovery}
-              className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors"
+              className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors focus:outline-none focus-visible:underline"
             >
               Esqueceu-se da senha?
             </button>
           </div>
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              required
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              className="w-full pl-9 pr-10 py-2.5 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all font-mono"
-            />
-            <Lock className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors"
-              aria-label={showPassword ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
-            >
-              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          </div>
+          <AriaTextField
+            label="Palavra-passe"
+            name="password"
+            required
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={setPassword}
+            placeholder="••••••••"
+            autoComplete="current-password"
+            icon={<Lock className="w-4 h-4 text-stone-400" />}
+            endAdornment={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="p-1.5 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-lg"
+                aria-label={showPassword ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            }
+          />
         </div>
 
         {/* Remember me */}

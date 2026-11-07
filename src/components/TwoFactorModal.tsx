@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ShieldCheck, KeyRound, MessageSquare, AlertCircle, ArrowLeft, X, Smartphone } from 'lucide-react';
 import { User } from '../types/auth';
+import { AriaModal } from './AriaModal';
 
 interface TwoFactorModalProps {
   isOpen: boolean;
@@ -138,18 +139,12 @@ export const TwoFactorModal: React.FC<TwoFactorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div 
-        className="w-full max-w-md bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 p-6 relative"
-        onClick={e => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-lg transition-colors"
-          aria-label="Fechar"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <AriaModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Autenticação de Dois Factores (2FA)"
+      maxWidth="max-w-md"
+    >
 
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 mx-auto flex items-center justify-center mb-3">
@@ -314,7 +309,6 @@ export const TwoFactorModal: React.FC<TwoFactorModalProps> = ({
             </button>
           )}
         </div>
-      </div>
-    </div>
+    </AriaModal>
   );
 };

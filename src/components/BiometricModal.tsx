@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Fingerprint, CheckCircle2, AlertCircle, X, Shield, Smartphone } from 'lucide-react';
 import { User } from '../types/auth';
 import { BiometricsService } from '../services/biometrics';
+import { AriaModal } from './AriaModal';
 
 interface BiometricModalProps {
   isOpen: boolean;
@@ -88,19 +89,13 @@ export const BiometricModal: React.FC<BiometricModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div 
-        className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 p-6 relative overflow-hidden text-center"
-        onClick={e => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-lg transition-colors"
-          aria-label="Fechar"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
+    <AriaModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={mode === 'login' ? 'Autenticação Biométrica' : 'Ativar Biometria / Passkey'}
+      maxWidth="max-w-sm"
+      className="text-center"
+    >
         <div className="flex justify-center mb-4">
           <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
             <Shield className="w-5 h-5" />
@@ -191,7 +186,6 @@ export const BiometricModal: React.FC<BiometricModalProps> = ({
             Voltar ao método tradicional
           </button>
         </div>
-      </div>
-    </div>
+    </AriaModal>
   );
 };

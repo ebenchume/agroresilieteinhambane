@@ -40,6 +40,8 @@ import { PestDiagnosticSection } from './PestDiagnosticSection';
 import { FarmCalculatorSection } from './FarmCalculatorSection';
 import { ProductivityChartSection } from './ProductivityChartSection';
 import { AgroResilientTips } from './AgroResilientTips';
+import { CropFiguresGallery } from './CropFiguresGallery';
+import { INHAMBANE_CROPS } from '../assets/crops';
 
 interface DashboardProps {
   user: User;
@@ -56,7 +58,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   marketPrices,
   onShowToast
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => StorageService.getAuditLogs());
   const [showBackupCodes, setShowBackupCodes] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
@@ -331,6 +333,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('crop-figures')}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'crop-figures'
+              ? 'bg-emerald-700 text-white dark:bg-emerald-600 shadow-sm'
+              : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
+          }`}
+        >
+          <Sprout className="w-4 h-4 text-emerald-300" />
+          <span>Figuras das Culturas</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('agro-tips')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'agro-tips'
@@ -534,6 +548,42 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 </dd>
               </div>
             </dl>
+
+            {/* Crop Figure Miniature Card */}
+            {(() => {
+              const cropFig = INHAMBANE_CROPS.find(c => c.name.toLowerCase() === user.crop.toLowerCase()) || INHAMBANE_CROPS[0];
+              return (
+                <div className="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800">
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src={cropFig.image}
+                      alt={`Figura da cultura ${cropFig.name}`}
+                      className="w-12 h-12 rounded-xl object-cover border border-emerald-500/30 shadow-xs shrink-0"
+                    />
+                    <div className="min-w-0 flex-1 text-xs">
+                      <span className="font-bold text-stone-900 dark:text-stone-100 block truncate">
+                        {cropFig.name} ({cropFig.localNameXitswa.split('/')[0].trim()})
+                      </span>
+                      <span className="text-[10px] text-stone-400 font-mono italic block truncate">
+                        {cropFig.scientificName}
+                      </span>
+                      <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold block">
+                        Ciclo: ~{cropFig.cycleDays} dias
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('crop-figures')}
+                      className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 transition-colors"
+                      title="Ver figura e ficha agronómica completa"
+                      aria-label={`Ver figura e ficha agronómica de ${cropFig.name}`}
+                    >
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Card 2: Resumo de Segurança */}
@@ -735,6 +785,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* TAB: FIGURAS DAS CULTURAS AGRÍCOLAS DE INHAMBANE */}
+      {activeTab === 'crop-figures' && (
+        <div className="space-y-6">
+          <CropFiguresGallery />
         </div>
       )}
 

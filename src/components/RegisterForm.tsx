@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { DistrictZone, CropType, UserType, User } from '../types/auth';
 import { StorageService } from '../services/storage';
+import { AriaTextField } from './AriaTextField';
 
 interface RegisterFormProps {
   onSuccessRegister: (user: User) => void;
@@ -118,59 +119,40 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Nome */}
-          <div>
-            <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-              Nome Completo
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Ex: Maria João Tembe"
-                className="w-full pl-8 pr-3 py-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500"
-              />
-              <UserIcon className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" />
-            </div>
-          </div>
+          <AriaTextField
+            label="Nome Completo"
+            name="name"
+            required
+            value={name}
+            onChange={setName}
+            placeholder="Ex: Maria João Tembe"
+            icon={<UserIcon className="w-3.5 h-3.5 text-stone-400" />}
+          />
 
           {/* Telefone */}
-          <div>
-            <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-              Telemóvel (M-Pesa / e-Mola)
-            </label>
-            <div className="relative">
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                placeholder="Ex: 84xxxxxxx ou 87xxxxxxx"
-                className="w-full pl-8 pr-3 py-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500"
-              />
-              <Phone className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" />
-            </div>
-          </div>
+          <AriaTextField
+            label="Telemóvel (M-Pesa / e-Mola)"
+            name="phone"
+            type="tel"
+            required
+            value={phone}
+            onChange={setPhone}
+            placeholder="Ex: 84xxxxxxx ou 87xxxxxxx"
+            icon={<Phone className="w-3.5 h-3.5 text-stone-400" />}
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Email */}
-          <div>
-            <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-              E-mail (opcional)
-            </label>
-            <div className="relative">
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="produtor@exemplo.com"
-                className="w-full pl-8 pr-3 py-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500"
-              />
-              <Mail className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" />
-            </div>
-          </div>
+          <AriaTextField
+            label="E-mail (opcional)"
+            name="email"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            placeholder="produtor@exemplo.com"
+            icon={<Mail className="w-3.5 h-3.5 text-stone-400" />}
+          />
 
           {/* Zona / Localidade */}
           <div>
@@ -249,46 +231,37 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({
 
         {/* Senhas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-              Palavra-passe
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="Mínimo 8 carateres"
-                className="w-full pl-8 pr-8 py-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500 font-mono"
-              />
-              <Lock className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" />
+          <AriaTextField
+            label="Palavra-passe"
+            name="password"
+            required
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={setPassword}
+            placeholder="Mínimo 8 carateres"
+            icon={<Lock className="w-3.5 h-3.5 text-stone-400" />}
+            endAdornment={
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2.5 top-2.5 text-stone-400"
+                className="p-1 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                aria-label={showPassword ? 'Ocultar palavra-passe' : 'Mostrar palavra-passe'}
               >
                 {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
               </button>
-            </div>
-          </div>
+            }
+          />
 
-          <div>
-            <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-              Confirmar Palavra-passe
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                placeholder="Repita a palavra-passe"
-                className="w-full pl-8 pr-3 py-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500 font-mono"
-              />
-              <Lock className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" />
-            </div>
-          </div>
+          <AriaTextField
+            label="Confirmar Palavra-passe"
+            name="confirmPassword"
+            required
+            type={showPassword ? 'text' : 'password'}
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+            placeholder="Repita a palavra-passe"
+            icon={<Lock className="w-3.5 h-3.5 text-stone-400" />}
+          />
         </div>
 
         {/* Password strength visual mini bar */}

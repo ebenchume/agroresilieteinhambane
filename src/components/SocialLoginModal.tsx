@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldCheck, Smartphone, Globe } from 'lucide-react';
+import { Smartphone, Globe } from 'lucide-react';
 import { SocialProvider, User } from '../types/auth';
 import { StorageService } from '../services/storage';
+import { AriaModal } from './AriaModal';
 
 interface SocialLoginModalProps {
   isOpen: boolean;
@@ -60,18 +61,12 @@ export const SocialLoginModal: React.FC<SocialLoginModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div 
-        className="w-full max-w-sm bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 p-6 relative"
-        onClick={e => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-lg transition-colors"
-          aria-label="Fechar"
-        >
-          <X className="w-5 h-5" />
-        </button>
+    <AriaModal
+      isOpen={isOpen && !!provider}
+      onClose={onClose}
+      title="Autenticação Social e Chave Digital"
+      maxWidth="max-w-sm"
+    >
 
         {/* GOOGLE MODAL */}
         {provider === 'google' && (
@@ -259,7 +254,6 @@ export const SocialLoginModal: React.FC<SocialLoginModalProps> = ({
             </button>
           </div>
         )}
-      </div>
-    </div>
+    </AriaModal>
   );
 };

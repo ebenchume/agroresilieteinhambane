@@ -13,6 +13,7 @@ import {
   Compass,
   FileCheck
 } from 'lucide-react';
+import { CropFiguresGallery } from './CropFiguresGallery';
 
 interface LandingViewProps {
   onOpenAuth: (mode?: 'login' | 'register') => void;
@@ -186,6 +187,13 @@ export const LandingView: React.FC<LandingViewProps> = ({
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Agricultural Crop Figures Gallery Section */}
+      <section className="py-16 border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <CropFiguresGallery onSelectCrop={() => onOpenAuth('register')} />
         </div>
       </section>
 

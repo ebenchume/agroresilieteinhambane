@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Mail, CheckCircle2, ArrowRight, X, AlertCircle, KeyRound, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { StorageService } from '../services/storage';
 import { User } from '../types/auth';
+import { AriaModal } from './AriaModal';
+import { AriaTextField } from './AriaTextField';
 
 interface RecoveryModalProps {
   isOpen: boolean;
@@ -40,7 +42,7 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (step === 'otp' && timer > 0) {
-      interval = setInterval(() => setTimer(t => t - 1), 1000);
+      interval = setInterval(() => setTimer((t: number) => t - 1), 1000);
     }
     return () => clearInterval(interval);
   }, [step, timer]);
@@ -114,19 +116,12 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({
   const passSpecial = /[^A-Za-z0-9]/.test(newPassword);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div 
-        className="w-full max-w-md bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 p-6 relative"
-        onClick={e => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-lg transition-colors"
-          aria-label="Fechar"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
+    <AriaModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Recuperação Rápida de Senha"
+      maxWidth="max-w-md"
+    >
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 mx-auto flex items-center justify-center mb-3">
             <KeyRound className="w-6 h-6" />
@@ -152,31 +147,24 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({
         {/* STEP 1: Enter Email */}
         {step === 'email' && (
           <form onSubmit={handleSendEmail} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1.5">
-                E-mail da sua conta
-              </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  required
-                  placeholder="exemplo@sapo.mz ou email@dominio.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs text-stone-900 dark:text-stone-100 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
-                />
-                <Mail className="w-4 h-4 text-stone-400 absolute left-3 top-3" />
-              </div>
-              <div className="mt-2 text-[11px] text-stone-500 flex items-center justify-between">
-                <span>Contas demo para teste rápido:</span>
-                <button
-                  type="button"
-                  onClick={() => setEmail('ebenchume@sapo.mz')}
-                  className="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline"
-                >
-                  ebenchume@sapo.mz
-                </button>
-              </div>
+            <AriaTextField
+              label="E-mail da sua conta"
+              type="email"
+              required
+              placeholder="exemplo@sapo.mz ou email@dominio.com"
+              value={email}
+              onChange={setEmail}
+              icon={<Mail className="w-4 h-4 text-stone-400" />}
+            />
+            <div className="mt-2 text-[11px] text-stone-500 flex items-center justify-between">
+              <span>Contas demo para teste rápido:</span>
+              <button
+                type="button"
+                onClick={() => setEmail('ebenchume@sapo.mz')}
+                className="text-emerald-700 dark:text-emerald-400 font-semibold hover:underline"
+              >
+                ebenchume@sapo.mz
+              </button>
             </div>
 
             <button
@@ -336,7 +324,6 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({
             </p>
           </div>
         )}
-      </div>
-    </div>
+    </AriaModal>
   );
 };

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { TestResult } from '../types/auth';
 import { AutomatedTestSuite } from '../services/testSuite';
+import { AriaModal } from './AriaModal';
 
 interface TestRunnerModalProps {
   isOpen: boolean;
@@ -61,36 +62,32 @@ export const TestRunnerModal: React.FC<TestRunnerModalProps> = ({
   const progressPercent = results.length > 0 ? Math.round((results.length / 9) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div 
-        className="w-full max-w-2xl bg-white dark:bg-stone-900 rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 p-6 max-h-[90vh] flex flex-col relative"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-stone-200 dark:border-stone-800">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
-              <FlaskConical className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-display text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                <span>Ciclo de Testes Automatizados</span>
-                <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
-                  CI/CD Integrado
-                </span>
-              </h3>
-              <p className="text-xs text-stone-500 dark:text-stone-400">
-                Verificação contínua de segurança, biometria, 2FA, persistência offline e geração de PDF.
-              </p>
-            </div>
+    <AriaModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Ciclo de Testes Automatizados"
+      maxWidth="max-w-2xl"
+      className="max-h-[90vh] flex flex-col"
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-stone-200 dark:border-stone-800">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
+            <FlaskConical className="w-5 h-5" />
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-lg"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div>
+            <h3 className="font-display text-lg font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
+              <span>Ciclo de Testes Automatizados</span>
+              <span className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
+                CI/CD Integrado
+              </span>
+            </h3>
+            <p className="text-xs text-stone-500 dark:text-stone-400">
+              Verificação contínua de segurança, biometria, 2FA, persistência offline e geração de PDF.
+            </p>
+          </div>
         </div>
+      </div>
 
         {/* Top KPI Metrics Strip */}
         <div className="grid grid-cols-4 gap-2.5 py-4 border-b border-stone-100 dark:border-stone-800">
@@ -220,7 +217,6 @@ export const TestRunnerModal: React.FC<TestRunnerModalProps> = ({
             <span>Executar Novamente</span>
           </button>
         </div>
-      </div>
-    </div>
+    </AriaModal>
   );
 };
