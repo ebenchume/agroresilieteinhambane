@@ -13,6 +13,8 @@ export interface PhotoDiagnosisResult {
   };
   preventNextTime: string[];
   localTip: string;
+  sdaeRecommendation?: string;
+  isBlurryOrUncertain?: boolean;
   generatedWith?: string;
   timestamp?: string;
 }
@@ -21,6 +23,7 @@ export interface AgronomistAnswer {
   answer: string;
   practicalSteps: string[];
   localWisdom: string;
+  sdaeRecommendation?: string;
   question?: string;
   crop?: string;
   zone?: string;

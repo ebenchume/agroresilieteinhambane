@@ -16,6 +16,7 @@ import {
 import { CropFiguresGallery } from './CropFiguresGallery';
 import { ProducerMode } from './producer/ProducerMode';
 import { ExtensionistMode } from './extensionist/ExtensionistMode';
+import { AndroidDownloadModal } from './AndroidDownloadModal';
 import { MobileService } from '../services/mobileService';
 import { UserProfileType } from '../types/mobileApp';
 
@@ -28,6 +29,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
   onOpenAuth,
   onOpenTestRunner
 }) => {
+  // Android Download Modal
+  const [androidModalOpen, setAndroidModalOpen] = useState(false);
+
   // Mobile Profile Selector State ('produtor' | 'extensionista')
   const [userProfile, setUserProfile] = useState<UserProfileType>(() => MobileService.getUserProfile());
   const [sunlightMode, setSunlightMode] = useState<boolean>(() => MobileService.getSunlightMode());
@@ -136,8 +140,24 @@ export const LandingView: React.FC<LandingViewProps> = ({
               </p>
             </div>
 
-            {/* Quick Access to Account */}
-            <div className="flex items-center gap-2 shrink-0">
+            {/* Quick Access to Account and Android Download */}
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setAndroidModalOpen(true)}
+                className={`px-3.5 py-2 text-xs font-black rounded-xl border flex items-center gap-1.5 transition-all shadow-sm ${
+                  sunlightMode
+                    ? 'bg-yellow-400 text-black border-yellow-500 hover:bg-yellow-300'
+                    : 'bg-[#064e3b] hover:bg-[#047857] text-[#3ddc84] hover:text-white border-[#10b981]/50'
+                }`}
+              >
+                {/* Android robot icon */}
+                <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                  <path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-4.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 2.23 12.95 2 12 2c-.96 0-1.86.23-2.66.63L7.85 1.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.3C6.71 4.22 5.5 6.01 5.5 8h13c0-1.99-1.21-3.78-2.97-4.84zM9 5.5c-.41 0-.75-.34-.75-.75s.34-.75.75-.75.75.34.75.75-.34.75-.75.75zm6 0c-.41 0-.75-.34-.75-.75s.34-.75.75-.75.75.34.75.75-.34.75-.75.75z" />
+                </svg>
+                <span>Baixar App Android</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => onOpenAuth('login')}
@@ -147,7 +167,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     : 'border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
                 }`}
               >
-                Entrar na Conta
+                Entrar
               </button>
               <button
                 type="button"
@@ -158,7 +178,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
                     : 'bg-emerald-700 text-white hover:bg-emerald-800'
                 }`}
               >
-                Registo de Produtor
+                Criar Conta
               </button>
             </div>
           </div>
@@ -407,6 +427,12 @@ export const LandingView: React.FC<LandingViewProps> = ({
           </button>
         </div>
       </section>
+
+      {/* Android Download Modal */}
+      <AndroidDownloadModal
+        isOpen={androidModalOpen}
+        onClose={() => setAndroidModalOpen(false)}
+      />
     </div>
   );
 };

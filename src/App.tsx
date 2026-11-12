@@ -10,6 +10,7 @@ import { RecoveryModal } from './components/RecoveryModal';
 import { SocialLoginModal } from './components/SocialLoginModal';
 import { TestRunnerModal } from './components/TestRunnerModal';
 import { NotificationCenter } from './components/NotificationCenter';
+import { PWAInstallBanner } from './components/PWAInstallBanner';
 import { StorageService } from './services/storage';
 import { User, Session, SocialProvider, AppNotification, MarketPrice } from './types/auth';
 import { CheckCircle2, Info, MessageCircle, Mail } from 'lucide-react';
@@ -121,6 +122,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 transition-colors duration-200">
+      {/* Android PWA Install Banner */}
+      <PWAInstallBanner variant="banner" />
+
       {/* Top Header */}
       <Header
         session={session}

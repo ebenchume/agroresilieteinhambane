@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ShieldCheck, 
   Smartphone, 
@@ -13,6 +13,7 @@ import {
   Sprout,
   CreditCard
 } from 'lucide-react';
+import { AndroidDownloadModal } from './AndroidDownloadModal';
 
 interface FooterProps {
   onOpenTestRunner: () => void;
@@ -86,6 +87,8 @@ const PARTNERS: Partner[] = [
 ];
 
 export const Footer: React.FC<FooterProps> = ({ onOpenTestRunner }) => {
+  const [androidModalOpen, setAndroidModalOpen] = useState(false);
+
   return (
     <footer className="mt-16 border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900/80 text-stone-600 dark:text-stone-400 py-12 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-12">
@@ -212,6 +215,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTestRunner }) => {
             <ul className="space-y-2 text-xs">
               <li>
                 <button
+                  type="button"
+                  onClick={() => setAndroidModalOpen(true)}
+                  className="hover:text-emerald-700 dark:hover:text-emerald-400 text-left font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"
+                >
+                  <Smartphone className="w-3.5 h-3.5 text-[#3ddc84]" />
+                  <span>Baixar App Android (.apk / Offline)</span>
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={onOpenTestRunner}
                   className="hover:text-emerald-700 dark:hover:text-emerald-400 text-left font-medium"
                 >
@@ -239,6 +252,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTestRunner }) => {
           <p>Em colaboração com CITT, SDAE Homoíne, INAM, TMCEL, Vodacom e Movitel.</p>
         </div>
       </div>
+
+      <AndroidDownloadModal
+        isOpen={androidModalOpen}
+        onClose={() => setAndroidModalOpen(false)}
+      />
     </footer>
   );
 };

@@ -360,93 +360,107 @@ Identifique a praga ou doença mais provável, determine a confiança do diagnó
   }
 });
 
-// Fallback diagnostics by crop for photo analysis
+// Fallback diagnostics by crop for photo analysis - Tailored to Inhambane's agroecological zones
 const PHOTO_DIAGNOSTICS_FALLBACK: Record<string, any> = {
   milho: {
-    cropIdentified: 'Milho (Zea mays)',
-    problemTitle: 'Ataque de Lagarta-do-Cartucho (Spodoptera frugiperda)',
+    cropIdentified: '🌽 Milho (Zea mays / Matuba)',
+    problemTitle: '🐛 Ataque de Lagarta-do-Cartucho no Milho',
     severity: 'Média',
-    simpleExplanation: 'A sua planta de milho tem marcas de roeduras e serradura no olho do cartucho. São lagartas pequenas que comem as folhas novas enquanto ainda estão enroladas.',
+    isBlurryOrUncertain: false,
+    simpleExplanation: '👀 Lagartas pequenas estão a roer o olho do milho e deixam serradura amarelada. Nos solos arenosos de Homoíne e Panda, a planta desidrata rápido se não for tratada.',
     whatToDoToday: [
-      'Vá à machamba de manhã cedo enquanto o milho ainda tem orvalho.',
-      'Abra devagar o cartucho das plantas com furos e retire as lagartas à mão se forem poucas.',
-      'Deite uma pitada de cinza de lenha peneirada misturada com areia no centro do cartucho.',
-      'Avise os vizinhos para também olharem o milho deles antes que a praga se espalhe.'
+      '🌅 Vistoria matinal: Vá à machamba antes das 08h enquanto o milho tem orvalho.',
+      '🪵 Cinza com areia: Deite uma pitadinha de cinza peneirada com areia fina no centro do cartucho.',
+      '🪓 Remoção manual: Se forem poucas plantas, retire as lagartas visíveis com os dedos.',
+      '🤝 Alerta aos vizinhos: Avise os produtores ao lado para travarem o avanço da praga.'
     ],
     homeRemedy: {
-      name: 'Pó Protetor de Cinza com Areia de Rio',
-      recipe: '2 copos de cinza fria bem peneirada + 1 copo de areia fina de rio + 1 colher de malagueta seca moída.',
-      application: 'Deite uma pitadinha directamente dentro do olho de cada planta atacada. A cinza sufoca a lagarta sem gastar dinheiro com remédios caros.'
+      name: '🪵 Pó Protetor de Cinza Vegetal e Areia de Rio',
+      recipe: '🥣 2 copos de cinza de lenha fria e peneirada + 1 copo de areia de rio limpa.',
+      application: '🌿 Deite uma pitada no olho do milho atacado. A cinza sufoca a lagarta sem gastar meticais com venenos.'
     },
     preventNextTime: [
-      'Plante feijão nhemba ou amendoim no meio das linhas de milho (o cheiro afasta as borboletas da praga).',
-      'Faça a sementeira logo nas primeiras chuvas de Outubro/Novembro para o milho crescer forte antes do pico da praga.'
+      '🌱 Consórcio inteligente: Plante feijão nhemba entre as linhas de milho para afastar borboletas.',
+      '🌧️ Sementeira no tempo: Semeie logo com as primeiras chuvas regulares de Outubro/Novembro.',
+      '🌾 Mulching: Cubra a terra com capim seco para segurar a humidade da terra arenosa.'
     ],
-    localTip: 'Mavele ya vupfa hi ku hlayisa — O milho só dá maçarocas bonitas quando cuidamos dele com paciência todos os dias (Xitswa).'
+    localTip: '🌽 Mavele ya vupfa hi ku hlayisa — O milho só dá maçarocas cheias quando cuidamos do solo e das folhas com paciência.',
+    sdaeRecommendation: '🏛️ Se o ataque atingir mais de 2 em cada 10 plantas de milho ou se alastrar rápido, contacte imediatamente o Extensionista da sua localidade ou dirija-se ao posto do SDAE (Serviços Distritais de Atividades Económicas).'
   },
   mandioca: {
-    cropIdentified: 'Mandioca (Manihot esculenta)',
-    problemTitle: 'Sinais de Mosaico Africano e Stress Hídrico',
+    cropIdentified: '🌿 Mandioca (Manihot esculenta / Chinamuna)',
+    problemTitle: '🟡 Mosaico Africano e Stress Hídrico',
     severity: 'Média',
-    simpleExplanation: 'As folhas da mandioca mostram partes amarelas e enrugadas. Isto acontece por causa do vírus do mosaico trazido pela mosquinha branca e pelo calor forte com pouca chuva.',
+    isBlurryOrUncertain: false,
+    simpleExplanation: '🦟 Folhas enrugadas com manchas amarelas causadas por vírus da mosca-branca e intensificadas pelo calor forte nos solos do litoral e interior.',
     whatToDoToday: [
-      'Se a planta estiver muito fraca e torcida, arranque pela raiz e deixe secar ao sol fora da machamba.',
-      'Não tire ramas dessa planta doente para plantar noutro canteiro.',
-      'Coloque palha seca ou capim na base dos pés para guardar a frescura da terra (mulching).',
-      'Pulverize água de sabão azul com alho no verso das folhas para afastar as mosquinhas brancas.'
+      '🌾 Mulching urgente: Espalhe 5 a 10 cm de palha ou capim seco na base dos camalhões para refrescar a raiz.',
+      '🔥 Arranque sanitário: Se a planta estiver muito fraca e torcida, arranque e queime fora da machamba.',
+      '🧄 Calda de sabão: Pulverize o verso das folhas vizinhas com sabão azul e alho para afastar as mosquinhas.',
+      '🚫 Não corte ramas: Nunca tire estacas de plantas com folhas deformadas para a próxima sementeira.'
     ],
     homeRemedy: {
-      name: 'Calda Repelente de Alho e Sabão Azul',
-      recipe: '3 cabeças de alho esmagadas + 1 colher de raspas de sabão azul derretidas em 5 litros de água morna.',
-      application: 'Coe num pano limpo e pulverize no verso das folhas de manhã bem cedo, 2 vezes por semana.'
+      name: '🧄 Calda Repelente de Alho e Sabão Azul',
+      recipe: '🥣 3 cabeças de alho esmagadas + 1 colher de raspas de sabão azul em 5 litros de água morna.',
+      application: '🌿 Coe num pano e pulverize no verso das folhas de manhã bem cedo, 2 vezes por semana.'
     },
     preventNextTime: [
-      'Peça estacas limpas de variedades tolerantes como a Chinamuna no posto do SDAE ou CITT.',
-      'Faça camalhões mais altos para reter a humidade do orvalho da noite.'
+      '🌱 Variedades IIAM: Peça manivas tolerantes (ex: Chinamuna) no viveiro distrital do SDAE ou CITT.',
+      '⛰️ Camalhões altos: Levante camalhões de 30 cm para proteger os tubérculos do sol forte.',
+      '💧 Covas de retenção: Abra pequenas covas entre as linhas para captar água das chuvas fracas.'
     ],
-    localTip: 'Chinamuna a nga chavi dyambu — A boa mandioca não teme o sol quando tem boa cobertura no solo (Bitonga).'
+    localTip: '🌿 Chinamuna a nga chavi dyambu — A boa mandioca não teme o sol quando tem boa cobertura morta na terra.',
+    sdaeRecommendation: '🏛️ Em caso de manchas castanhas severas no caule ou podridão das raízes, alerte o técnico extensionista do SDAE para despiste do vírus do estriado castanho (CBSD).'
   },
   amendoim: {
-    cropIdentified: 'Amendoim (Arachis hypogaea)',
-    problemTitle: 'Mancha Castanha nas Folhas (Cercosporiose)',
+    cropIdentified: '🥜 Amendoim (Arachis hypogaea / Bebiano)',
+    problemTitle: '🍂 Mancha Castanha nas Folhas (Cercosporiose)',
     severity: 'Baixa',
-    simpleExplanation: 'As folhas do amendoim estão com pequenos pontos escuros com auréola amarelada. É uma mancha provocada por humidade acumulada na folhagem nas noites quentes.',
+    isBlurryOrUncertain: false,
+    simpleExplanation: '🍂 Pequenos pontos castanhos causados por humidade noturna acumulada nas folhas durante as noites quentes de Inhambane.',
     whatToDoToday: [
-      'Não regue as folhas à tarde ou à noite; a água deve ir directo para a terra ao pé da raiz.',
-      'Afofe suavemente a terra ao redor da planta para que os pregos (ginóforos) entrem na terra solta.',
-      'Remova as folhas secas caídas no chão para não guardarem o fungo.'
+      '💧 Rega na terra: Nunca molhe a folhagem ao entardecer; a água deve ir direto ao pé da raiz.',
+      '⛏️ Amanho suave: Afofe a terra ao redor da planta para os pregos entrarem na terra solta sem partir.',
+      '🍂 Limpeza de folhas secas: Retire folhas caídas no chão para não alimentarem os fungos.',
+      '☀️ Ventilação: Elimine ervas daninhas altas que tapam a circulação do vento entre as linhas.'
     ],
     homeRemedy: {
-      name: 'Bio-fertilizante de Cinza e Camomila Silvestre',
-      recipe: '1 copo de cinza vegetal misturado em 10 litros de água limpa; deixar assentar por 12 horas.',
-      application: 'Regue a base do caule com a água clara. O potássio da cinza dá força à casca da vagem subterrânea.'
+      name: '🪵 Água de Cinza com Fortificante de Potássio',
+      recipe: '🥣 1 copo de cinza vegetal peneirada em 10 litros de água; repousar 12 horas.',
+      application: '🌱 Regue ao redor do caule. O potássio fortalece a casca das vagens subterrâneas contra fungos.'
     },
     preventNextTime: [
-      'Faça rotação: não plante amendoim duas épocas seguidas no mesmo bocado de terra.',
-      'Guarde as sementes em sacos pendurados longe da humidade do chão para evitar bolor e aflatoxina.'
+      '🔄 Rotação de culturas: Nunca plante amendoim na mesma terra duas épocas seguidas.',
+      '🧺 Secagem suspensa: Seque as vagens colhidas em esteiras suspensas para evitar aflatoxinas no solo úmido.',
+      '🌱 Sementes limpas: Guarde sementes inteiras, secas e livres de bolor.'
     ],
-    localTip: 'Muruwa wu lava misava yo olova — O amendoim precisa de terra leve e fofa para dar muitas vagens cheias (Xitswa).'
+    localTip: '🥜 Muruwa wu lava misava yo olova — O amendoim precisa de terra leve e fofa para encher as vagens.',
+    sdaeRecommendation: '🏛️ Se as folhas caírem prematuramente em mais de 30% da machamba antes do enchimento do grão, informe o extensionista local do SDAE.'
   },
   caju: {
-    cropIdentified: 'Cajueiro (Anacardium occidentale)',
-    problemTitle: 'Oídio e Envelhecimento dos Rebentos Florais',
+    cropIdentified: '🌳 Cajueiro (Anacardium occidentale)',
+    problemTitle: '⚪ Oídio do Cajueiro e Queima da Florada',
     severity: 'Média',
-    simpleExplanation: 'As flores e folhas jovens do cajueiro mostram uma poeira esbranquiçada ou acinzentada. Isso queima a florada e faz a maçã e a castanha caírem antes do tempo.',
+    isBlurryOrUncertain: false,
+    simpleExplanation: '⚪ Pó branco-acinzentado nas folhas jovens e nas flores que impede a castanha de vingar, frequente na época fresca e nas brisas do litoral.',
     whatToDoToday: [
-      'Faça poda de limpeza: corte os ramos secos ou entrelaçados para o vento e o sol entrarem bem no meio da copa.',
-      'Limpe o mato ao redor do tronco do cajueiro num círculo de 2 metros (fazer caldeira limpa).',
-      'Queime ou enterre os ramos doentes longe dos cajueiros sãos.'
+      '✂️ Poda de limpeza: Corte galhos secos e entrelaçados para o sol entrar no meio da copa.',
+      '🧹 Caldeira limpa: Capine o mato num círculo de 2 metros ao redor do tronco do cajueiro.',
+      '🔥 Eliminação de ramos atacados: Queime ou enterre ramos com flores secas longe das árvores sãs.',
+      '💨 Inspeção com vento fresco: Vigie os rebentos novos a cada 4 dias.'
     ],
     homeRemedy: {
-      name: 'Pulverização de Enxofre Molhável ou Calda com Leite Azedo',
-      recipe: '1 litro de leite azedo ou soro + 9 litros de água + 20g de cinza filtrada.',
-      application: 'Pulverize a copa nos dias frescos sem vento forte. O leite reduz a multiplicação do fungo do oídio.'
+      name: '🥛 Calda de Leite Azedo com Cinza Filtrada',
+      recipe: '🥣 1 litro de leite azedo ou soro + 9 litros de água + 20g de cinza vegetal bem fina.',
+      application: '🌳 Pulverize a copa nos dias frescos e sem vento forte logo no início da emissão das flores.'
     },
     preventNextTime: [
-      'Inicie a limpeza da copa em Maio/Junho, antes da emissão das panículas florais.',
-      'Procure o técnico do SDAE para o programa provincial de pulverização de cajueiros de Inhambane.'
+      '📅 Calendário distrital: Inicie a poda de saneamento em Maio/Junho antes do início da floração.',
+      '🧪 Pulverização com enxofre: Acompanhe a campanha oficial de pulverização do SDAE / INCAJU.',
+      '🌳 Variedades enxertadas: Substitua árvores improdutivas por mudas enxertadas de alta produção.'
     ],
-    localTip: 'Mkanju wu hlayisiwe hi nkarhi — O cajueiro bem podado no tempo certo enche o cesto de castanha (Bitonga).'
+    localTip: '🌳 Mkanju wu hlayisiwe hi nkarhi — O cajueiro bem podado no tempo certo enche o cesto de castanha boa.',
+    sdaeRecommendation: '🏛️ Para ter acesso ao atomizador motorizado ou ao programa oficial de tratamento com enxofre em pó, contacte o extensionista da sua zona ou o posto do SDAE.'
   }
 };
 

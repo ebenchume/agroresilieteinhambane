@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Session, AppNotification } from '../types/auth';
 import { ThemeSelector } from './ThemeSelector';
+import { PWAInstallBanner } from './PWAInstallBanner';
 
 interface HeaderProps {
   session: Session | null;
@@ -130,6 +131,9 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-600 rounded-full ring-2 ring-white dark:ring-stone-900" />
             )}
           </button>
+
+          {/* Android PWA Install Pill */}
+          <PWAInstallBanner variant="pill" />
 
           {/* Accessible Theme Selector (Claro / Escuro) */}
           <ThemeSelector />

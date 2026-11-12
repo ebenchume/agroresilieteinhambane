@@ -12,11 +12,13 @@ import {
   CloudSun,
   Flame,
   CheckCircle2,
-  Sprout
+  Sprout,
+  Smartphone
 } from 'lucide-react';
 import { PlantDiagnosisModal } from './PlantDiagnosisModal';
 import { AskAgronomistModal } from './AskAgronomistModal';
 import { DroughtTipsModal } from './DroughtTipsModal';
+import { AndroidDownloadModal } from '../AndroidDownloadModal';
 
 interface ProducerModeProps {
   sunlightMode: boolean;
@@ -32,6 +34,7 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
   const [diagnosisOpen, setDiagnosisOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
   const [droughtOpen, setDroughtOpen] = useState(false);
+  const [androidModalOpen, setAndroidModalOpen] = useState(false);
 
   return (
     <div className={`space-y-6 ${sunlightMode ? 'font-medium' : ''}`}>
@@ -272,7 +275,54 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
         </div>
       </div>
 
+      {/* Android Offline Machamba Banner */}
+      <div className={`p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 transition-all shadow-sm ${
+        sunlightMode
+          ? 'bg-yellow-400 text-black border-yellow-500 font-bold'
+          : 'bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white border-emerald-700/60'
+      }`}>
+        <div className="flex items-center gap-3.5">
+          <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+            sunlightMode ? 'bg-black text-yellow-400' : 'bg-[#3ddc84] text-stone-950 shadow-md'
+          }`}>
+            <Smartphone className="w-6 h-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs uppercase tracking-wider font-black">
+                Instale no seu Android
+              </span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                sunlightMode ? 'bg-black text-yellow-400' : 'bg-emerald-700 text-emerald-100'
+              }`}>
+                Sem Rede / Offline
+              </span>
+            </div>
+            <p className="text-xs opacity-90 mt-0.5 max-w-xl">
+              Grave o AgroResiliente no telemóvel para levar para o meio da machamba. Abre num toque mesmo sem saldo ou sinal.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setAndroidModalOpen(true)}
+          className={`px-4 py-2.5 rounded-xl font-black text-xs transition-all shadow-md flex items-center gap-2 shrink-0 ${
+            sunlightMode
+              ? 'bg-black text-yellow-400 hover:bg-stone-900'
+              : 'bg-white text-emerald-950 hover:bg-emerald-50 hover:shadow-lg'
+          }`}
+        >
+          <Smartphone className="w-4 h-4 text-emerald-600" />
+          <span>Baixar & Instalar App Android</span>
+        </button>
+      </div>
+
       {/* Modals */}
+      <AndroidDownloadModal
+        isOpen={androidModalOpen}
+        onClose={() => setAndroidModalOpen(false)}
+      />
       <PlantDiagnosisModal
         isOpen={diagnosisOpen}
         onClose={() => setDiagnosisOpen(false)}

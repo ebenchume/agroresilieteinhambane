@@ -3,20 +3,49 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer base {
+  :root {
+    --brand-forest: #064e3b;
+    --brand-emerald: #059669;
+    --brand-leaf: #10b981;
+    --brand-amber: #d97706;
+    --brand-sun: #f59e0b;
+    --brand-sand: #faf8f5;
+    --brand-android: #3ddc84;
+  }
+
   html {
-    font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     scroll-behavior: smooth;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--brand-sand);
+  }
+
+  .dark body {
+    background-color: #0c0f0e;
   }
 }
 
 .font-display {
-  font-family: 'Syne', 'Outfit', system-ui, sans-serif;
-  letter-spacing: -0.025em;
+  font-family: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: -0.03em;
 }
 
 .font-editorial {
   font-family: 'Newsreader', Georgia, serif;
+}
+
+/* Android & App Specific Glows */
+.android-glow {
+  box-shadow: 0 0 24px -4px rgba(61, 220, 132, 0.35);
+}
+
+.sunlight-glow {
+  box-shadow: 0 0 30px -5px rgba(245, 158, 11, 0.4);
 }
 
 /* Custom transitions and scrollbar */
