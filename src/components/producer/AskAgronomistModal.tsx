@@ -26,24 +26,34 @@ interface AskAgronomistModalProps {
 
 const QUICK_QUESTIONS = [
   {
+    icon: Droplets,
+    title: 'O que plantar em Homoíne',
+    question: 'Quais culturas resilientes são mais recomendadas para os solos arenosos e clima de Homoíne?'
+  },
+  {
     icon: Bug,
     title: 'Lagarta no milho',
     question: 'Como combater a lagarta do cartucho no milho usando cinza e remédio caseiro?'
   },
   {
+    icon: Calendar,
+    title: 'Batata-Doce Alaranjada',
+    question: 'Como cultivar batata-doce de polpa alaranjada (BPA) em camalhões para colher em 90 dias?'
+  },
+  {
+    icon: Sparkles,
+    title: 'Mapira vs Milho na Seca',
+    question: 'Por que a Mapira (Sorgo) e o Feijão Nhemba aguentam mais o calor de Homoíne do que o milho?'
+  },
+  {
     icon: Droplets,
-    title: 'Seca e rega',
-    question: 'Como proteger a terra da seca em Panda e Homoíne usando mulching?'
+    title: 'Feijão Bóer e Gergelim',
+    question: 'Como plantar feijão bóer (nandolo) em consórcio e gergelim como cultura de rendimento?'
   },
   {
     icon: Calendar,
     title: 'Manivas de mandioca',
-    question: 'Qual a melhor forma de guardar ramas de mandioca para plantar na época das chuvas?'
-  },
-  {
-    icon: Sparkles,
-    title: 'Poda do cajueiro',
-    question: 'Quando e como devo podar o cajueiro para evitar oídio e ter mais castanha?'
+    question: 'Qual a melhor forma de guardar ramas de mandioca Chinamuna para plantar com as chuvas?'
   }
 ];
 

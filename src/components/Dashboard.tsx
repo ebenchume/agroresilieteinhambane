@@ -27,7 +27,8 @@ import {
   BarChart3,
   Compass,
   Camera,
-  ClipboardList
+  ClipboardList,
+  ClipboardCheck
 } from 'lucide-react';
 import { User, AuditLog, MarketPrice } from '../types/auth';
 import { StorageService } from '../services/storage';
@@ -48,6 +49,7 @@ import { ProducerMode } from './producer/ProducerMode';
 import { ExtensionistMode } from './extensionist/ExtensionistMode';
 import { MobileService } from '../services/mobileService';
 import { UserProfileType } from '../types/mobileApp';
+import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
 
 interface DashboardProps {
   user: User;
@@ -64,7 +66,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   marketPrices,
   onShowToast
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'field-surveys' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
   const [dashProfile, setDashProfile] = useState<UserProfileType>(() => MobileService.getUserProfile());
   const [dashSunlight, setDashSunlight] = useState<boolean>(() => MobileService.getSunlightMode());
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => StorageService.getAuditLogs());
@@ -354,6 +356,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('field-surveys')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shadow-xs ${
+            activeTab === 'field-surveys'
+              ? 'bg-amber-700 text-white dark:bg-amber-600 ring-2 ring-amber-500/40'
+              : 'text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/50 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/60'
+          }`}
+        >
+          <ClipboardCheck className="w-4 h-4" />
+          <span>Inquéritos de Campo (Offline)</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('crop-figures')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'crop-figures'
@@ -511,18 +525,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 Seletor de Modo Operacional
               </span>
               <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
-                Alternar entre Modo Produtor e Modo Extensionista
+                Alternar entre Produtor, Extensionista e Inquéritos de Campo
               </h3>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => {
                   setDashProfile('produtor');
                   MobileService.setUserProfile('produtor');
                 }}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   dashProfile === 'produtor'
                     ? 'bg-emerald-700 text-white shadow-sm'
                     : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
@@ -538,7 +552,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   setDashProfile('extensionista');
                   MobileService.setUserProfile('extensionista');
                 }}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
                   dashProfile === 'extensionista'
                     ? 'bg-sky-700 text-white shadow-sm'
                     : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
@@ -546,6 +560,22 @@ export const Dashboard: React.FC<DashboardProps> = ({
               >
                 <ClipboardList className="w-4 h-4" />
                 <span>Sou Extensionista</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setDashProfile('inquiridor');
+                  MobileService.setUserProfile('inquiridor');
+                }}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  dashProfile === 'inquiridor'
+                    ? 'bg-amber-700 text-white shadow-sm'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+                }`}
+              >
+                <ClipboardCheck className="w-4 h-4" />
+                <span>Inquéritos de Campo</span>
               </button>
             </div>
           </div>
@@ -561,11 +591,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
               }}
               onOpenCropGallery={() => setActiveTab('crop-figures')}
             />
-          ) : (
+          ) : dashProfile === 'extensionista' ? (
             <ExtensionistMode
               onOpenCropGallery={() => setActiveTab('crop-figures')}
+              onOpenFieldSurveys={() => setActiveTab('field-surveys')}
             />
+          ) : (
+            <FieldDataCollectionSection onShowToast={onShowToast} />
           )}
+        </div>
+      )}
+
+      {/* TAB: RECOLHA DE DADOS & INQUÉRITOS DE CAMPO (HOMOÍNE & INHAMBANE) */}
+      {activeTab === 'field-surveys' && (
+        <div className="space-y-6">
+          <FieldDataCollectionSection onShowToast={onShowToast} />
         </div>
       )}
 

@@ -56,7 +56,7 @@ export const PWAInstallBanner: React.FC<PWAInstallBannerProps> = ({
                 <Smartphone className="w-4 h-4" />
               </div>
               <p className="font-semibold text-emerald-50">
-                <strong className="text-[#3ddc84] font-black">Aplicativo Android:</strong> Instale no telemóvel para aceder a diagnósticos de plantas e cotações na machamba sem internet!
+                <strong className="text-[#3ddc84] font-black">App Android de Campo:</strong> Instale no telemóvel para recolher inquéritos agrícolas e dados de culturas offline em Homoíne e Inhambane!
               </p>
             </div>
 

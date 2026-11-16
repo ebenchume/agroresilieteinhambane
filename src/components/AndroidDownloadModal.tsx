@@ -97,7 +97,7 @@ export const AndroidDownloadModal: React.FC<AndroidDownloadModalProps> = ({
                   AgroResiliente Inhambane
                 </h3>
                 <p className="text-xs text-emerald-100/90 leading-tight">
-                  Aplicativo oficial para pequenos produtores e técnicos agrários.
+                  Kit oficial para recolha de dados de campo, inquéritos agrícolas e diagnóstico em Homoíne e nos 14 distritos de Inhambane.
                 </p>
               </div>
             </div>
@@ -114,15 +114,15 @@ export const AndroidDownloadModal: React.FC<AndroidDownloadModalProps> = ({
           <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-emerald-500/30 text-[11px]">
             <div className="flex items-center gap-1.5 text-emerald-100">
               <WifiOff className="w-3.5 h-3.5 text-[#3ddc84]" />
-              <span>Funciona Offline</span>
+              <span>Inquéritos Offline</span>
             </div>
             <div className="flex items-center gap-1.5 text-emerald-100">
               <ShieldCheck className="w-3.5 h-3.5 text-[#3ddc84]" />
-              <span>Apenas 1.8 MB</span>
+              <span>GPS + CSV/JSON</span>
             </div>
             <div className="flex items-center gap-1.5 text-emerald-100">
               <Sparkles className="w-3.5 h-3.5 text-[#3ddc84]" />
-              <span>Gemini IA Grátis</span>
+              <span>14 Distritos</span>
             </div>
           </div>
         </div>

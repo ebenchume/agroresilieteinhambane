@@ -98,6 +98,58 @@ const CROP_SPECS: Record<string, CropSpec> = {
     expectedYieldMaxKg: 1000,
     manurePerHaTons: 2.5,
     notes: 'Excelente fixador de azoto; reduz o aparecimento de ervas daninhas.'
+  },
+  batatadoce: {
+    name: 'Batata-Doce Alaranjada (BPA)',
+    variety: 'Irene / Bela (Biofortificada Pró-Vitamina A)',
+    seedPerHa: 33000,
+    unit: 'estacas',
+    spacingRowCm: 100,
+    spacingPlantCm: 30,
+    plantsPerHa: 33000,
+    expectedYieldMinKg: 10000,
+    expectedYieldMaxKg: 18000,
+    manurePerHaTons: 5,
+    notes: 'Enterre ramas apicais sadias de 30 cm deixando 2 nós expostos em camalhões altos.'
+  },
+  mapira: {
+    name: 'Mapira (Sorgo)',
+    variety: 'Macia / Sima (Resistente à Seca Extrema)',
+    seedPerHa: 10,
+    unit: 'kg',
+    spacingRowCm: 75,
+    spacingPlantCm: 20,
+    plantsPerHa: 66000,
+    expectedYieldMinKg: 1400,
+    expectedYieldMaxKg: 2800,
+    manurePerHaTons: 3,
+    notes: 'Consome 40% menos água que o milho; excelente para zonas secas de Homoíne e Panda.'
+  },
+  feijaoboer: {
+    name: 'Feijão Bóer (Nandolo)',
+    variety: 'ICEAP 00557 / Nandolo Tradicional',
+    seedPerHa: 15,
+    unit: 'kg',
+    spacingRowCm: 100,
+    spacingPlantCm: 50,
+    plantsPerHa: 20000,
+    expectedYieldMinKg: 800,
+    expectedYieldMaxKg: 1600,
+    manurePerHaTons: 2,
+    notes: 'Arbusto perene de raízes profundas que quebra o subsolo arenoso e protege contra vento.'
+  },
+  gergelim: {
+    name: 'Gergelim (Sésamo)',
+    variety: 'Lindi Branco / Sésamo Comercial de Inhambane',
+    seedPerHa: 6,
+    unit: 'kg',
+    spacingRowCm: 60,
+    spacingPlantCm: 15,
+    plantsPerHa: 110000,
+    expectedYieldMinKg: 600,
+    expectedYieldMaxKg: 1200,
+    manurePerHaTons: 2,
+    notes: 'Cultura de rendimento com alta procura e cotação comercial nas feiras da região.'
   }
 };
 

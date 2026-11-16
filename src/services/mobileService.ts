@@ -6,15 +6,15 @@ const STORAGE_SUNLIGHT_KEY = 'agro_sunlight_mode';
 
 export const MobileService = {
   // Profile persistence
-  getUserProfile(): 'produtor' | 'extensionista' {
+  getUserProfile(): 'produtor' | 'extensionista' | 'inquiridor' {
     try {
       const saved = localStorage.getItem(STORAGE_PROFILE_KEY);
-      if (saved === 'extensionista' || saved === 'produtor') return saved;
+      if (saved === 'extensionista' || saved === 'produtor' || saved === 'inquiridor') return saved;
     } catch (e) {}
     return 'produtor'; // Default to producer for smallholder farmers
   },
 
-  setUserProfile(profile: 'produtor' | 'extensionista') {
+  setUserProfile(profile: 'produtor' | 'extensionista' | 'inquiridor') {
     try {
       localStorage.setItem(STORAGE_PROFILE_KEY, profile);
     } catch (e) {}

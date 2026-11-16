@@ -461,6 +461,80 @@ const PHOTO_DIAGNOSTICS_FALLBACK: Record<string, any> = {
     ],
     localTip: '🌳 Mkanju wu hlayisiwe hi nkarhi — O cajueiro bem podado no tempo certo enche o cesto de castanha boa.',
     sdaeRecommendation: '🏛️ Para ter acesso ao atomizador motorizado ou ao programa oficial de tratamento com enxofre em pó, contacte o extensionista da sua zona ou o posto do SDAE.'
+  },
+  nhemba: {
+    cropIdentified: '🌱 Feijão Nhemba (Vigna unguiculata / Tihoco)',
+    problemTitle: '🐜 Pulgão Preto (Afídeo) e Tripes na Flor do Nhemba',
+    severity: 'Média',
+    isBlurryOrUncertain: false,
+    simpleExplanation: '🐜 Colónias de afídeos pretos nos brotos e flores sugando a seiva. Muito comuns com o calor e tempo seco em Homoíne.',
+    whatToDoToday: [
+      '🥣 Calda de sabão e cinza: Pulverize nas partes atacadas logo pela manhã fresca.',
+      '🌾 Preserve as joaninhas: Os besourinhos vermelhos são predadores naturais benéficos.',
+      '✂️ Poda sanitária: Se houver ramas muito atacadas e secas, retire e queime fora da machamba.',
+      '💧 Humidade na base: Coloque mulching na base para a planta ter vigor e se defender.'
+    ],
+    homeRemedy: {
+      name: '🧼 Calda de Sabão Azul com Extrato de Folhas de Neem',
+      recipe: '🥣 1 punhado de folhas de neem trituradas em 5L de água morna + 1 colher de sabão azul ralado.',
+      application: '🌿 Coe no pano e aplique nas pontas atacadas a cada 3 dias até desaparecer o pulgão.'
+    },
+    preventNextTime: [
+      '🌽 Consórcio com milho: Plante linhas alternadas de milho e nhemba para barreira contra insetos.',
+      '🌱 Sementeira precoce: Semeie logo com o início firme das primeiras chuvas.',
+      '🔄 Rotação da machamba: Alterne anualmente com mandioca ou batata-doce.'
+    ],
+    localTip: '🌱 Tihoco i vutomi e machambeni — O nhemba alimenta a família com matapa verde e grãos garantidos.',
+    sdaeRecommendation: '🏛️ Em caso de praga generalizada em mais de metade da área cultivada, contacte o extensionista do SDAE Homoíne.'
+  },
+  batatadoce: {
+    cropIdentified: '🍠 Batata-doce Alaranjada (Ipomoea batatas / Irene)',
+    problemTitle: '🪲 Gorgulho da Batata-doce (Cilas) e Fendas no Solo',
+    severity: 'Média',
+    isBlurryOrUncertain: false,
+    simpleExplanation: '🪲 Pequenos escaravelhos que entram pelas fendas do solo arenoso ressecado pelo sol de Homoíne e atacam os tubérculos.',
+    whatToDoToday: [
+      '⛏️ Amontoa alta imediata: Chegue terra solta aos camalhões tapando todas as fendas e gretas.',
+      '🌾 Mulching de capim: Cubra os camalhões com 5 cm de palha para o sol não rachar a terra.',
+      '🧺 Colheita no ponto: Não deixe as batatas na terra mais de 100 dias após a sementeira.',
+      '🔥 Limpeza de restos: Retire batatas bichadas ou velhas da machamba para não criar ninho de praga.'
+    ],
+    homeRemedy: {
+      name: '🪵 Barreira de Terra Fofa e Cinza Peneirada nos Camalhões',
+      recipe: '🥣 Misture 1 bacia de cinza de lenha peneirada com terra fofa fresca.',
+      application: '🍠 Chegue a terra ao colo das plantas para impedir a entrada dos gorgulhos até às raízes.'
+    },
+    preventNextTime: [
+      '🌿 Ramas apicais sadias: Plante apenas estacas da ponta das ramas (30 cm) sem vestígios de furos.',
+      '🔄 Rotação de talhão: Não repita batata-doce na mesma terra na época seguinte.',
+      '💧 Plantio em vales/baixas: Aproveite as baixas úmidas de Homoíne para colheitas escalonadas.'
+    ],
+    localTip: '🍠 Muhlaha wo pswhuka wu tisa rihanyu — A batata alaranjada enriquece a saúde das crianças e tolera solos secos.',
+    sdaeRecommendation: '🏛️ Solicite ramas limpas certificadas nos campos de multiplicação do CITT ou do SDAE Homoíne.'
+  },
+  mapira: {
+    cropIdentified: '🌾 Mapira / Sorgo Grão (Sorghum bicolor / Macia)',
+    problemTitle: '🐛 Broca do Colmo e Proteção da Panícula',
+    severity: 'Baixa',
+    isBlurryOrUncertain: false,
+    simpleExplanation: '🐛 Serradura no colo da folha ou ataque de pássaros na fase de enchimento do grão da mapira.',
+    whatToDoToday: [
+      '🪵 Cinza no cartucho: Deite uma pitada de cinza de lenha no olho da planta jovem se vir broca.',
+      '🔔 Espantalhos sonoros: Instale fitas plásticas e latas para afugentar revoadas de aves nos grãos.',
+      '🌾 Inspeção no calor: A mapira enrola a folha ao meio-dia para guardar água; isso é sinal de força e não doença.'
+    ],
+    homeRemedy: {
+      name: '🪵 Calda de Cinza com Pimenta Malagueta Repelente',
+      recipe: '🥣 5 pimentas malaguetas esmagadas + 1 copo de cinza vegetal em 10L de água.',
+      application: '🌿 Pulverize ao redor da haste para repelir gafanhotos e brocas migradoras.'
+    },
+    preventNextTime: [
+      '🌱 Sementeira comunitária: Semeie em bloco com vizinhos para diminuir pressão de pássaros.',
+      '🌾 Variedade Macia: Utilize a semente melhorada do IIAM que amadurece de forma uniforme.',
+      '🍂 Rotação com leguminosas: Alterne com feijão nhemba ou feijão bóer.'
+    ],
+    localTip: '🌾 Mapira a yi chavi dyambu — A mapira é o escudo do camponês contra os anos de seca em Inhambane.',
+    sdaeRecommendation: '🏛️ Informe o extensionista do SDAE sobre eventuais ataques de gafanhoto elegante ou bandos de quelea.'
   }
 };
 
@@ -472,6 +546,9 @@ app.post('/api/gemini/analyze-photo', async (req, res) => {
   const hintKey = (cropHint || '').toLowerCase();
   let matchedFallbackKey = 'milho';
   if (hintKey.includes('mandioca') || hintKey.includes('cassava')) matchedFallbackKey = 'mandioca';
+  else if (hintKey.includes('nhemba') || hintKey.includes('cowpea') || hintKey.includes('tihoco')) matchedFallbackKey = 'nhemba';
+  else if (hintKey.includes('batata') || hintKey.includes('sweet potato') || hintKey.includes('muhlaha')) matchedFallbackKey = 'batatadoce';
+  else if (hintKey.includes('mapira') || hintKey.includes('sorgo') || hintKey.includes('sorghum')) matchedFallbackKey = 'mapira';
   else if (hintKey.includes('amendoim') || hintKey.includes('peanut')) matchedFallbackKey = 'amendoim';
   else if (hintKey.includes('caju') || hintKey.includes('cashew')) matchedFallbackKey = 'caju';
   else if (hintKey.includes('milho') || hintKey.includes('maize')) matchedFallbackKey = 'milho';
@@ -611,7 +688,38 @@ app.post('/api/gemini/ask-agronomist', async (req, res) => {
   // Fallback agricultural responses
   const getFallbackAnswer = (q: string) => {
     const qL = q.toLowerCase();
-    if (qL.includes('seca') || qL.includes('chuva') || qL.includes('água') || qL.includes('agua')) {
+    if (qL.includes('homoíne') || qL.includes('homoine') || qL.includes('o que plantar') || qL.includes('quais culturas') || qL.includes('sugerir')) {
+      return {
+        answer: 'Para o clima e solos franco-arenosos de Homoíne, as culturas mais resilientes e rentáveis recomendadas pelo SDAE e investigação agrária para sugerir à população são: 1) Feijão Nhemba (Tihoco) — ciclo veloz de 65-75 dias, fixa azoto e dá folhas para mucapata; 2) Batata-Doce de Polpa Alaranjada (BPA - Irene/Bela) — colheita farta em 90-100 dias com ramas que tapam o solo; 3) Mapira / Sorgo (Macia) — consome 40% menos água que o milho e não quebra com estiagem; 4) Feijão Bóer (Nandolo) — arbusto perene que perfura o solo arenoso compactado e produz alimento no inverno; 5) Gergelim (Sésamo) — excelente cultura comercial de alto rendimento por kg; 6) Feijão Jugo (Tindluwa) — leguminosa subterrânea ancestral super-resistente à aridez; além das tradicionais Mandioca (Chinamuna) e Milho precoce (Matuba).',
+        practicalSteps: [
+          'Diversifique a machamba: plante pelo menos 1 leguminosa (nhemba ou bóer) para cada talhão de cereal.',
+          'Adote a batata-doce alaranjada nas baixas ou camalhões com mulching para nutrição infantil.',
+          'Semeie Mapira (Sorgo) nas zonas mais quentes e com menor histórico de chuva regular.',
+          'Plante gergelim em pequena escala para ter dinheiro em caixa nas cooperativas de venda.'
+        ],
+        localWisdom: 'Ku byala swakudya swo hambana i ku tiyisa khwiri ra ndyangu — Plantar culturas variadas e resistentes é o segredo para nunca faltar comida em casa.'
+      };
+    } else if (qL.includes('batata') || qL.includes('muhlaha')) {
+      return {
+        answer: 'A Batata-doce de Polpa Alaranjada (BPA - variedades Irene, Bela, Cecília) é uma das melhores culturas para Homoíne. Plante em camalhões altos de 30 cm com terra bem fofa, enterrando 3 nós da rama e deixando 2 fora. O ciclo é rápido (90 a 100 dias) e o teor altíssimo de Pró-Vitamina A protege as crianças da desnutrição e de problemas de visão.',
+        practicalSteps: [
+          'Faça amontoa alta aos 35 dias para cobrir as batatas contra o gorgulho cilas.',
+          'Espalhe palha seca nos camalhões para refrescar a raiz sob o sol forte.',
+          'Colha logo que as folhas começarem a amarelecer levemente (cerca de 3 meses).'
+        ],
+        localWisdom: 'Muhlaha wo pswhuka wu tisa rihanyu — A batata doce dourada é saúde e alimento doce na machamba.'
+      };
+    } else if (qL.includes('mapira') || qL.includes('sorgo')) {
+      return {
+        answer: 'A Mapira (Sorgo Grão) é o cereal de ouro para as épocas de pouca chuva em Homoíne e Panda. As suas raízes descem até 1,5 metro no solo arenoso à procura de humidade e as folhas fecham os poros durante o calor do meio-dia. Exige 40% menos água que o milho e garante farinha fina e saborosa mesmo nos anos em que o milho queima.',
+        practicalSteps: [
+          'Semeie no compasso de 75 x 20 cm, deixando 2 a 3 sementes por covacho.',
+          'Consorcie com feijão nhemba ou feijão bóer nas entrelinhas.',
+          'Proteja a panícula na fase de grão leitoso contra pássaros com fitas sonoras.'
+        ],
+        localWisdom: 'Mapira a yi chavi dyambu — A mapira encara o sol forte de Inhambane sem baixar a cabeça.'
+      };
+    } else if (qL.includes('seca') || qL.includes('chuva') || qL.includes('água') || qL.includes('agua')) {
       return {
         answer: 'Para enfrentar a seca em Inhambane (especialmente em zonas de solo arenoso como Panda e Homoíne), a regra de ouro é nunca deixar o solo nu. Coloque uma camada grossa de 5 a 10 cm de palha seca ou capim cortado (mulching) ao redor das plantas. Isto reduz a perda de água pelo calor do sol em mais de 40%. Além disso, faça covas de plantio com matéria orgânica curtida no fundo para guardar o orvalho da noite.',
         practicalSteps: [
@@ -732,6 +840,47 @@ Retorne um JSON com:
       }
     });
   }
+});
+
+// In-memory store for synced field surveys from Android PWA devices
+const syncedFieldSurveysStore: Record<string, any> = {};
+
+// POST /api/field-surveys/sync
+app.post('/api/field-surveys/sync', (req, res) => {
+  const { surveys = [] } = req.body || {};
+  if (!Array.isArray(surveys)) {
+    return res.status(400).json({ success: false, error: 'Lista de inquéritos inválida.' });
+  }
+
+  const syncedIds: string[] = [];
+  const now = new Date().toISOString();
+
+  for (const s of surveys) {
+    if (s && s.id) {
+      syncedFieldSurveysStore[s.id] = {
+        ...s,
+        syncStatus: 'sincronizado',
+        syncedAt: now
+      };
+      syncedIds.push(s.id);
+    }
+  }
+
+  return res.json({
+    success: true,
+    syncedCount: syncedIds.length,
+    syncedIds,
+    syncedAt: now
+  });
+});
+
+// GET /api/field-surveys
+app.get('/api/field-surveys', (_req, res) => {
+  return res.json({
+    success: true,
+    count: Object.keys(syncedFieldSurveysStore).length,
+    surveys: Object.values(syncedFieldSurveysStore)
+  });
 });
 
 // Production static assets & SPA fallback

@@ -11,11 +11,13 @@ import {
   FileCheck,
   Sprout,
   Sun,
-  ClipboardList
+  ClipboardList,
+  ClipboardCheck
 } from 'lucide-react';
 import { CropFiguresGallery } from './CropFiguresGallery';
 import { ProducerMode } from './producer/ProducerMode';
 import { ExtensionistMode } from './extensionist/ExtensionistMode';
+import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
 import { AndroidDownloadModal } from './AndroidDownloadModal';
 import { MobileService } from '../services/mobileService';
 import { UserProfileType } from '../types/mobileApp';
@@ -183,7 +185,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
             </div>
           </div>
 
-          {/* TWO PRIMARY PROFILE BUTTONS: 'Sou Produtor' vs 'Sou Extensionista' */}
+          {/* THREE PRIMARY PROFILE BUTTONS: 'Sou Produtor', 'Sou Extensionista', 'Inquéritos de Campo' */}
           <div className="pt-2">
             <label className={`block text-xs font-black uppercase tracking-wider mb-2 ${
               sunlightMode ? 'text-yellow-400' : 'text-stone-700 dark:text-stone-300'
@@ -191,7 +193,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
               Escolha o seu perfil de utilização:
             </label>
 
-            <div className="grid grid-cols-2 gap-3 max-w-2xl">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl">
               {/* Profile 1: Sou Produtor */}
               <button
                 type="button"
@@ -261,6 +263,41 @@ export const LandingView: React.FC<LandingViewProps> = ({
                   </span>
                 </div>
               </button>
+
+              {/* Profile 3: Recolha de Dados & Inquéritos */}
+              <button
+                type="button"
+                onClick={() => handleSelectProfile('inquiridor')}
+                className={`p-3.5 sm:p-4 rounded-2xl border-3 text-left transition-all flex items-center gap-3 transform active:scale-98 shadow-sm ${
+                  userProfile === 'inquiridor'
+                    ? sunlightMode
+                      ? 'bg-yellow-400 text-black border-yellow-400 font-black ring-4 ring-yellow-400/30'
+                      : 'bg-[#022c22] text-white border-[#3ddc84] ring-4 ring-[#3ddc84]/25 shadow-md'
+                    : sunlightMode
+                      ? 'bg-stone-900 text-stone-300 border-stone-700 hover:border-yellow-400'
+                      : 'bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-200 border-stone-200 dark:border-stone-800 hover:border-[#3ddc84]'
+                }`}
+              >
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                  userProfile === 'inquiridor'
+                    ? sunlightMode ? 'bg-black text-yellow-400' : 'bg-[#3ddc84] text-stone-950'
+                    : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-[#3ddc84]'
+                }`}>
+                  <ClipboardCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-sm sm:text-base font-extrabold block leading-tight">
+                    Inquéritos de Campo
+                  </span>
+                  <span className={`text-[11px] block mt-0.5 ${
+                    userProfile === 'inquiridor'
+                      ? sunlightMode ? 'text-stone-900 font-bold' : 'text-emerald-200'
+                      : 'text-stone-500'
+                  }`}>
+                    Recolha Android · Homoíne & Província
+                  </span>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -275,16 +312,19 @@ export const LandingView: React.FC<LandingViewProps> = ({
               onToggleSunlightMode={handleToggleSunlight}
               onOpenCropGallery={handleScrollToGallery}
             />
-          ) : (
+          ) : userProfile === 'extensionista' ? (
             <ExtensionistMode
               onOpenCropGallery={handleScrollToGallery}
+              onOpenFieldSurveys={() => handleSelectProfile('inquiridor')}
             />
+          ) : (
+            <FieldDataCollectionSection />
           )}
         </div>
       </section>
 
       {/* CROP FIGURES & BOTANICAL PROFILES GALLERY */}
-      <div ref={galleryRef}>
+      <div ref={galleryRef} className="max-w-6xl mx-auto px-4 sm:px-6 my-10">
         <CropFiguresGallery />
       </div>
 

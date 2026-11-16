@@ -1,4 +1,53 @@
-export type UserProfileType = 'produtor' | 'extensionista';
+export type UserProfileType = 'produtor' | 'extensionista' | 'inquiridor';
+
+export type InhambaneDistrict =
+  | 'Homoíne'
+  | 'Maxixe'
+  | 'Panda'
+  | 'Massinga'
+  | 'Morrumbene'
+  | 'Zavala'
+  | 'Inharrime'
+  | 'Jangamo'
+  | 'Inhambane-Cidade'
+  | 'Funhalouro'
+  | 'Mabote'
+  | 'Vilankulo'
+  | 'Inhassoro'
+  | 'Govuro';
+
+export type SurveySyncStatus = 'pendente_offline' | 'sincronizado';
+
+export interface FieldSurveyRecord {
+  id: string;
+  district: InhambaneDistrict;
+  locality: string;
+  communityOrAssociation: string;
+  respondentName: string;
+  respondentGender: 'Feminino' | 'Masculino' | 'Outro';
+  phone: string;
+  householdSize: number;
+  gpsCoords?: {
+    lat: number;
+    lng: number;
+    accuracy?: number;
+  };
+  primaryCrops: string[];
+  totalAreaHa: number;
+  estimatedYieldKg: number;
+  seedSource: 'Semente Própria/Local' | 'SDAE / CITT' | 'Mercado / Feira' | 'Associação Agrária';
+  soilType: 'Arenoso Claro' | 'Franco-Arenoso' | 'Baixa / Aluvial' | 'Duna Costeira';
+  irrigationAccess: 'Sequeiro (Chuva)' | 'Regadio Manual' | 'Bomba / Gota-a-Gota' | 'Baixa Húmidas';
+  conservationPractices: string[];
+  mainChallenges: string[];
+  harvestDestination: 'Autoconsumo Familiar' | 'Consumo + Venda Local' | 'Comercialização Associativa';
+  notes: string;
+  interviewerName: string;
+  createdAt: string;
+  syncedAt?: string;
+  syncStatus: SurveySyncStatus;
+  devicePlatform: 'Android PWA' | 'Web Mobile' | 'Desktop';
+}
 
 export interface PhotoDiagnosisResult {
   cropIdentified: string;

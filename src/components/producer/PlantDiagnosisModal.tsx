@@ -23,6 +23,25 @@ import milhoSample from '../../assets/images/crop_milho_1794030985517.jpg';
 import mandiocaSample from '../../assets/images/crop_mandioca_1794030998682.jpg';
 import amendoimSample from '../../assets/images/crop_amendoim_1794031011147.jpg';
 import cajuSample from '../../assets/images/crop_caju_1794031024216.jpg';
+import nhembaSample from '../../assets/images/crop_nhemba_1794492921636.jpg';
+import batatadoceSample from '../../assets/images/crop_batatadoce_1794492921893.jpg';
+import mapiraSample from '../../assets/images/crop_mapira_1794492935435.jpg';
+import feijaoboerSample from '../../assets/images/crop_feijaoboer_1794492936374.jpg';
+import gergelimSample from '../../assets/images/crop_gergelim_1794492951282.jpg';
+import feijaojugoSample from '../../assets/images/crop_feijaojugo_1794492951498.jpg';
+
+export type DiagnosticCropOption = 
+  | 'Milho' 
+  | 'Mandioca' 
+  | 'Amendoim' 
+  | 'Feijão nhemba' 
+  | 'Batata-doce' 
+  | 'Mapira' 
+  | 'Feijão bóer' 
+  | 'Gergelim' 
+  | 'Feijão jugo' 
+  | 'Caju' 
+  | 'Outra';
 
 interface PlantDiagnosisModalProps {
   isOpen: boolean;
@@ -35,7 +54,7 @@ export const PlantDiagnosisModal: React.FC<PlantDiagnosisModalProps> = ({
   onClose,
   sunlightMode = false
 }) => {
-  const [selectedCrop, setSelectedCrop] = useState<'Milho' | 'Mandioca' | 'Amendoim' | 'Caju' | 'Outra'>('Milho');
+  const [selectedCrop, setSelectedCrop] = useState<DiagnosticCropOption>('Milho');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [farmerNote, setFarmerNote] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
@@ -78,7 +97,7 @@ export const PlantDiagnosisModal: React.FC<PlantDiagnosisModalProps> = ({
     reader.readAsDataURL(file);
   };
 
-  const handleSelectSample = (crop: 'Milho' | 'Mandioca' | 'Amendoim' | 'Caju', sampleSrc: string) => {
+  const handleSelectSample = (crop: DiagnosticCropOption, sampleSrc: string) => {
     setSelectedCrop(crop);
     setImagePreview(sampleSrc);
     setError(null);
@@ -186,23 +205,40 @@ export const PlantDiagnosisModal: React.FC<PlantDiagnosisModalProps> = ({
           <div className="space-y-4">
             {/* Crop selector pills */}
             <div>
-              <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-1.5">
-                1. Qual é a cultura da machamba?
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                {(['Milho', 'Mandioca', 'Amendoim', 'Caju'] as const).map(crop => (
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-stone-700 dark:text-stone-300 uppercase tracking-wider">
+                  1. Qual é a cultura da machamba?
+                </label>
+                <span className="text-[10px] text-stone-500 font-medium">
+                  {selectedCrop} selecionada
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {([
+                  'Milho', 
+                  'Mandioca', 
+                  'Feijão nhemba',
+                  'Batata-doce', 
+                  'Mapira', 
+                  'Feijão bóer', 
+                  'Gergelim', 
+                  'Feijão jugo', 
+                  'Amendoim', 
+                  'Caju', 
+                  'Outra'
+                ] as const).map(crop => (
                   <button
                     key={crop}
                     type="button"
                     onClick={() => setSelectedCrop(crop)}
-                    className={`py-2 px-1 text-center rounded-xl text-xs font-bold border transition-all ${
+                    className={`py-2 px-2 text-center rounded-xl text-xs font-bold border transition-all ${
                       selectedCrop === crop
                         ? sunlightMode
                           ? 'bg-yellow-400 text-black border-yellow-400 scale-[1.02]'
-                          : 'bg-emerald-700 text-white border-emerald-700 shadow-sm'
+                          : 'bg-[#065f46] text-white border-[#065f46] shadow-sm'
                         : sunlightMode
-                          ? 'bg-stone-900 text-stone-300 border-stone-700'
-                          : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700'
+                          ? 'bg-stone-900 text-stone-300 border-stone-700 hover:border-yellow-400'
+                          : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:bg-stone-50'
                     }`}
                   >
                     {crop}
@@ -290,16 +326,16 @@ export const PlantDiagnosisModal: React.FC<PlantDiagnosisModalProps> = ({
                   <div className="pt-2">
                     <p className="text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-2 flex items-center gap-1">
                       <ImageIcon className="w-3.5 h-3.5" />
-                      <span>Ou teste com fotos de culturas locais de Inhambane:</span>
+                      <span>Ou teste com fotos de culturas locais e resilientes de Homoíne:</span>
                     </p>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
                       <button
                         type="button"
                         onClick={() => handleSelectSample('Milho', milhoSample)}
-                        className="group relative rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
                       >
                         <img src={milhoSample} alt="Milho" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
-                        <span className="absolute inset-x-0 bottom-0 bg-black/70 text-white text-[9px] font-bold py-0.5 text-center block">
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
                           Milho
                         </span>
                       </button>
@@ -307,32 +343,76 @@ export const PlantDiagnosisModal: React.FC<PlantDiagnosisModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleSelectSample('Mandioca', mandiocaSample)}
-                        className="group relative rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
                       >
                         <img src={mandiocaSample} alt="Mandioca" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
-                        <span className="absolute inset-x-0 bottom-0 bg-black/70 text-white text-[9px] font-bold py-0.5 text-center block">
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
                           Mandioca
                         </span>
                       </button>
 
                       <button
                         type="button"
-                        onClick={() => handleSelectSample('Amendoim', amendoimSample)}
-                        className="group relative rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                        onClick={() => handleSelectSample('Feijão nhemba', nhembaSample)}
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
                       >
-                        <img src={amendoimSample} alt="Amendoim" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
-                        <span className="absolute inset-x-0 bottom-0 bg-black/70 text-white text-[9px] font-bold py-0.5 text-center block">
-                          Amendoim
+                        <img src={nhembaSample} alt="Feijão Nhemba" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
+                          Nhemba
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSample('Batata-doce', batatadoceSample)}
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                      >
+                        <img src={batatadoceSample} alt="Batata-doce" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
+                          Batata-Doce
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSample('Mapira', mapiraSample)}
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                      >
+                        <img src={mapiraSample} alt="Mapira" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
+                          Mapira (Sorgo)
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSample('Feijão bóer', feijaoboerSample)}
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                      >
+                        <img src={feijaoboerSample} alt="Feijão Bóer" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
+                          Bóer (Nandolo)
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleSelectSample('Gergelim', gergelimSample)}
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                      >
+                        <img src={gergelimSample} alt="Gergelim" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
+                          Gergelim
                         </span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => handleSelectSample('Caju', cajuSample)}
-                        className="group relative rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
+                        className="group relative rounded-xl overflow-hidden border-2 border-stone-200 dark:border-stone-700 hover:border-emerald-500 text-left"
                       >
                         <img src={cajuSample} alt="Caju" className="w-full h-14 object-cover group-hover:scale-105 transition-transform" />
-                        <span className="absolute inset-x-0 bottom-0 bg-black/70 text-white text-[9px] font-bold py-0.5 text-center block">
+                        <span className="absolute inset-x-0 bottom-0 bg-black/75 text-white text-[9px] font-bold py-0.5 text-center block truncate px-0.5">
                           Caju
                         </span>
                       </button>

@@ -4,34 +4,38 @@ import {
   Calculator, 
   Bug, 
   ArrowRight, 
-  MapPin, 
-  Users, 
-  TrendingUp, 
-  ShieldCheck, 
-  Radio, 
-  CheckCircle2,
-  FileText,
-  Calendar
+  TrendingUp,
+  ClipboardCheck,
+  Smartphone
 } from 'lucide-react';
 import { MachambaVisitModal } from './MachambaVisitModal';
 import { SeedCalculatorModal } from './SeedCalculatorModal';
 import { PestReportModal } from './PestReportModal';
+import { FieldSurveyModal } from '../field/FieldSurveyModal';
 import { MobileService } from '../../services/mobileService';
+import { FieldSurveyService } from '../../services/fieldSurveyService';
 
 interface ExtensionistModeProps {
   onOpenCropGallery?: () => void;
+  onOpenFieldSurveys?: () => void;
 }
 
 export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
-  onOpenCropGallery
+  onOpenFieldSurveys
 }) => {
   const [visitModalOpen, setVisitModalOpen] = useState(false);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [pestReportOpen, setPestReportOpen] = useState(false);
+  const [surveyModalOpen, setSurveyModalOpen] = useState(false);
   const [visitsCount, setVisitsCount] = useState(() => MobileService.getVisits().length);
+  const [surveysCount, setSurveysCount] = useState(() => FieldSurveyService.getSurveys().length);
 
   const refreshVisits = () => {
     setVisitsCount(MobileService.getVisits().length);
+  };
+
+  const refreshSurveys = () => {
+    setSurveysCount(FieldSurveyService.getSurveys().length);
   };
 
   return (
@@ -52,31 +56,67 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
               </span>
             </div>
             <p className="text-xs text-stone-300 mt-0.5">
-              Ferramentas de campo para assistência aos produtores familiares e vigilância agronómica.
+              Ferramentas de campo offline para recolha de inquéritos agrícolas, visitas e vigilância fitossanitária.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <span className="text-xs font-semibold px-3 py-1 bg-sky-800/80 rounded-xl text-sky-200">
-            {visitsCount} visitas arquivadas offline
+            {visitsCount} visitas · {surveysCount} inquéritos
           </span>
         </div>
       </div>
 
-      {/* THREE MAIN EXTENSIONIST ACTION PANELS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      {/* FOUR MAIN EXTENSIONIST ACTION PANELS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         
-        {/* CARD 1: Registar Visita à Machamba */}
+        {/* CARD 1: Recolha de Dados & Inquéritos de Campo */}
         <button
           type="button"
-          onClick={() => setVisitModalOpen(true)}
-          className="group p-6 rounded-3xl border-3 border-emerald-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-emerald-600 flex flex-col justify-between min-h-[220px]"
+          onClick={() => (onOpenFieldSurveys ? onOpenFieldSurveys() : setSurveyModalOpen(true))}
+          className="group p-5 rounded-3xl border-3 border-[#3ddc84] bg-gradient-to-br from-[#022c22] to-[#064e3b] text-white text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl flex flex-col justify-between min-h-[220px]"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-700 text-white flex items-center justify-center shadow-md">
-                <ClipboardList className="w-8 h-8" />
+              <div className="w-13 h-13 rounded-2xl bg-[#3ddc84] text-stone-950 flex items-center justify-center shadow-md">
+                <ClipboardCheck className="w-7 h-7" />
+              </div>
+
+              <span className="text-[10px] uppercase tracking-wider font-black px-2.5 py-1 rounded-full bg-[#3ddc84]/20 text-[#3ddc84] border border-[#3ddc84]/40 flex items-center gap-1">
+                <Smartphone className="w-3 h-3" />
+                <span>Android Offline</span>
+              </span>
+            </div>
+
+            <h3 className="font-display text-lg sm:text-xl font-black text-white tracking-tight leading-snug">
+              Inquéritos & Recolha de Campo
+            </h3>
+
+            <p className="text-xs text-emerald-100/90 mt-2 leading-relaxed">
+              Levantamento de culturas, áreas e clima nos <strong>14 distritos de Inhambane</strong> (Homoíne, Panda, Massinga...) com GPS offline.
+            </p>
+          </div>
+
+          <div className="pt-4 mt-2 border-t border-emerald-500/30 flex items-center justify-between">
+            <span className="text-xs font-black text-[#3ddc84] flex items-center gap-1.5">
+              <span>Abrir Painel / Inquirir</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+            <span className="text-[10px] text-emerald-200">{surveysCount} Inquéritos</span>
+          </div>
+        </button>
+
+        {/* CARD 2: Registar Visita à Machamba */}
+        <button
+          type="button"
+          onClick={() => setVisitModalOpen(true)}
+          className="group p-5 rounded-3xl border-3 border-emerald-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-emerald-600 flex flex-col justify-between min-h-[220px]"
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-13 h-13 rounded-2xl bg-emerald-700 text-white flex items-center justify-center shadow-md">
+                <ClipboardList className="w-7 h-7" />
               </div>
 
               <span className="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
@@ -84,7 +124,7 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
               </span>
             </div>
 
-            <h3 className="font-display text-xl sm:text-2xl font-black text-stone-900 dark:text-stone-100 tracking-tight leading-snug">
+            <h3 className="font-display text-lg sm:text-xl font-black text-stone-900 dark:text-stone-100 tracking-tight leading-snug">
               Registar Visita à Machamba
             </h3>
 
@@ -95,23 +135,23 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
 
           <div className="pt-4 mt-2 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
             <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-              <span>Abrir Formulário de Visita</span>
+              <span>Nova Visita</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
             <span className="text-[10px] text-stone-400">{visitsCount} Registos</span>
           </div>
         </button>
 
-        {/* CARD 2: Calculadora de Sementes/Área */}
+        {/* CARD 3: Calculadora de Sementes/Área */}
         <button
           type="button"
           onClick={() => setCalculatorOpen(true)}
-          className="group p-6 rounded-3xl border-3 border-sky-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-sky-600 flex flex-col justify-between min-h-[220px]"
+          className="group p-5 rounded-3xl border-3 border-sky-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-sky-600 flex flex-col justify-between min-h-[220px]"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-sky-700 text-white flex items-center justify-center shadow-md">
-                <Calculator className="w-8 h-8" />
+              <div className="w-13 h-13 rounded-2xl bg-sky-700 text-white flex items-center justify-center shadow-md">
+                <Calculator className="w-7 h-7" />
               </div>
 
               <span className="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
@@ -119,7 +159,7 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
               </span>
             </div>
 
-            <h3 className="font-display text-xl sm:text-2xl font-black text-stone-900 dark:text-stone-100 tracking-tight leading-snug">
+            <h3 className="font-display text-lg sm:text-xl font-black text-stone-900 dark:text-stone-100 tracking-tight leading-snug">
               Calculadora de Sementes/Área
             </h3>
 
@@ -130,45 +170,45 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
 
           <div className="pt-4 mt-2 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
             <span className="text-xs font-bold text-sky-700 dark:text-sky-400 flex items-center gap-1.5">
-              <span>Calcular Insumos por Hectare</span>
+              <span>Calcular Insumos</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
-            <span className="text-[10px] text-stone-400">Por Canteiro ou Ha</span>
+            <span className="text-[10px] text-stone-400">Canteiro / Ha</span>
           </div>
         </button>
 
-        {/* CARD 3: Relatório de Pragas na Zona */}
+        {/* CARD 4: Relatório de Pragas na Zona */}
         <button
           type="button"
           onClick={() => setPestReportOpen(true)}
-          className="group p-6 rounded-3xl border-3 border-amber-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-amber-600 flex flex-col justify-between min-h-[220px]"
+          className="group p-5 rounded-3xl border-3 border-amber-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-amber-600 flex flex-col justify-between min-h-[220px]"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
-              <div className="w-14 h-14 rounded-2xl bg-amber-600 text-white flex items-center justify-center shadow-md">
-                <Bug className="w-8 h-8" />
+              <div className="w-13 h-13 rounded-2xl bg-amber-600 text-white flex items-center justify-center shadow-md">
+                <Bug className="w-7 h-7" />
               </div>
 
               <span className="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
-                Vigilância Fitossanitária
+                Vigilância
               </span>
             </div>
 
-            <h3 className="font-display text-xl sm:text-2xl font-black text-stone-900 dark:text-stone-100 tracking-tight leading-snug">
+            <h3 className="font-display text-lg sm:text-xl font-black text-stone-900 dark:text-stone-100 tracking-tight leading-snug">
               Relatório de Pragas na Zona
             </h3>
 
             <p className="text-xs text-stone-600 dark:text-stone-400 mt-2 leading-relaxed">
-              Quadro de alertas por distrito (Homoíne, Panda, Massinga, Zavala) com taxas de infestação e <strong>emissão de alertas por SMS</strong>.
+              Quadro de alertas por distrito (Homoíne, Panda, Massinga, Zavala) com taxas de infestação e <strong>alertas SMS</strong>.
             </p>
           </div>
 
           <div className="pt-4 mt-2 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
             <span className="text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-              <span>Ver Mapa de Alertas</span>
+              <span>Ver Alertas</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </span>
-            <span className="text-[10px] text-stone-400">5 Distritos Monitorizados</span>
+            <span className="text-[10px] text-stone-400">5 Distritos</span>
           </div>
         </button>
 
@@ -188,8 +228,8 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
           </div>
 
           <div className="p-3 bg-white dark:bg-stone-800/70 rounded-xl border border-stone-200 dark:border-stone-700">
-            <span className="text-[10px] font-semibold text-stone-500 uppercase block">Área Coberta</span>
-            <p className="text-base font-bold text-stone-900 dark:text-stone-100 mt-0.5">485 hectares</p>
+            <span className="text-[10px] font-semibold text-stone-500 uppercase block">Inquéritos Recolhidos</span>
+            <p className="text-base font-bold text-emerald-700 dark:text-emerald-400 mt-0.5">{surveysCount} inquéritos</p>
           </div>
 
           <div className="p-3 bg-white dark:bg-stone-800/70 rounded-xl border border-stone-200 dark:border-stone-700">
@@ -205,6 +245,12 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
       </div>
 
       {/* Modals */}
+      <FieldSurveyModal
+        isOpen={surveyModalOpen}
+        onClose={() => setSurveyModalOpen(false)}
+        onSurveySaved={refreshSurveys}
+      />
+
       <MachambaVisitModal
         isOpen={visitModalOpen}
         onClose={() => setVisitModalOpen(false)}

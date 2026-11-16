@@ -124,7 +124,7 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
             <p className={`text-xs mt-2 leading-relaxed ${
               sunlightMode ? 'text-stone-200 font-semibold' : 'text-stone-600 dark:text-stone-400'
             }`}>
-              Tire uma foto na machamba de <strong>Milho, Mandioca, Amendoim ou Caju</strong> para detetar pragas, doenças ou falta de água.
+              Tire uma foto na machamba de <strong>Milho, Mandioca, Nhemba, Batata-Doce, Mapira, Bóer, Amendoim ou Caju</strong> para detetar pragas, doenças ou falta de água.
             </p>
           </div>
 

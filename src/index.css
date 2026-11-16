@@ -4,13 +4,32 @@
 
 @layer base {
   :root {
+    /* High-contrast palette calibrated for intense Inhambane sunlight and machamba readability */
+    --brand-forest: #022c22;       /* Ultra-deep, high-contrast forest green (contrast ratio > 11:1 on sand/white) */
+    --brand-forest-light: #064e3b; /* Deep foliage tone for badges and subtle borders */
+    --brand-emerald: #065f46;      /* High-contrast rich emerald for crisp outdoor text & primary UI elements */
+    --brand-emerald-vibrant: #047857; /* Punchy emerald for buttons and interactive controls */
+    --brand-leaf: #059669;         /* Vibrant leaf green */
+    --brand-amber: #b45309;        /* High-contrast warm amber */
+    --brand-sun: #d97706;          /* Deep golden sun tone readable against bright sky */
+    --brand-sand: #f8f6f0;         /* Anti-glare warm sandy earth tone inspired by Inhambane soils */
+    --brand-android: #16a34a;      /* High-contrast outdoor Android green */
+    --sunlight-bg: #fefce8;        /* High-luminosity field yellow */
+    --sunlight-text: #022c22;      /* Deep contrast text */
+  }
+
+  .dark {
     --brand-forest: #064e3b;
-    --brand-emerald: #059669;
-    --brand-leaf: #10b981;
-    --brand-amber: #d97706;
+    --brand-forest-light: #047857;
+    --brand-emerald: #10b981;      /* Luminous high-contrast emerald for dark machamba nights */
+    --brand-emerald-vibrant: #34d399;
+    --brand-leaf: #34d399;
+    --brand-amber: #fbbf24;
     --brand-sun: #f59e0b;
-    --brand-sand: #faf8f5;
+    --brand-sand: #0c1210;
     --brand-android: #3ddc84;
+    --sunlight-bg: #000000;
+    --sunlight-text: #fde047;
   }
 
   html {
@@ -23,10 +42,12 @@
 
   body {
     background-color: var(--brand-sand);
+    color: var(--brand-forest);
   }
 
   .dark body {
-    background-color: #0c0f0e;
+    background-color: #080d0b;
+    color: #f1f5f3;
   }
 }
 

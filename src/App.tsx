@@ -11,6 +11,7 @@ import { SocialLoginModal } from './components/SocialLoginModal';
 import { TestRunnerModal } from './components/TestRunnerModal';
 import { NotificationCenter } from './components/NotificationCenter';
 import { PWAInstallBanner } from './components/PWAInstallBanner';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { StorageService } from './services/storage';
 import { User, Session, SocialProvider, AppNotification, MarketPrice } from './types/auth';
 import { CheckCircle2, Info, MessageCircle, Mail } from 'lucide-react';
@@ -283,6 +284,8 @@ export default function App() {
           <Mail className="w-5 h-5" />
         </a>
       </aside>
+      {/* Offline Status & Field Survey Sync Floating Badge */}
+      <OfflineIndicator />
     </div>
   );
 }
