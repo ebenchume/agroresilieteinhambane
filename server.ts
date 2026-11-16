@@ -1,9 +1,12 @@
 import express from 'express';
+import http from 'http';
+import fs from 'fs';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
+import { WebSocketServer, WebSocket } from 'ws';
 
 dotenv.config();
 
@@ -883,6 +886,174 @@ app.get('/api/field-surveys', (_req, res) => {
   });
 });
 
+// ============================================================================
+// REAL SERVER-AUTHORITATIVE VISITOR COUNTER & LIVE ONLINE PRESENCE (WebSocket)
+// ============================================================================
+const VISITOR_STATS_FILE = path.join(__dirname, '.visitor-stats.json');
+
+interface PersistedVisitorData {
+  totalVisits: number;
+  uniqueVisitorIds: string[];
+  peakOnline: number;
+  updatedAt: string;
+}
+
+const visitorState = {
+  totalVisits: 0,
+  uniqueVisitorIds: new Set<string>(),
+  peakOnline: 0,
+  recordedTabIds: new Set<string>(),
+};
+
+// Load persisted stats if available
+try {
+  if (fs.existsSync(VISITOR_STATS_FILE)) {
+    const raw = fs.readFileSync(VISITOR_STATS_FILE, 'utf-8');
+    const parsed = JSON.parse(raw) as Partial<PersistedVisitorData>;
+    if (typeof parsed.totalVisits === 'number' && parsed.totalVisits >= 0) {
+      visitorState.totalVisits = parsed.totalVisits;
+    }
+    if (Array.isArray(parsed.uniqueVisitorIds)) {
+      for (const id of parsed.uniqueVisitorIds) {
+        if (typeof id === 'string' && id) {
+          visitorState.uniqueVisitorIds.add(id);
+        }
+      }
+    }
+    if (typeof parsed.peakOnline === 'number' && parsed.peakOnline >= 0) {
+      visitorState.peakOnline = parsed.peakOnline;
+    }
+  }
+} catch (err) {
+  console.warn('Could not load persisted visitor stats, starting fresh:', (err as Error).message);
+}
+
+let persistTimeout: ReturnType<typeof setTimeout> | null = null;
+function schedulePersistVisitorStats() {
+  if (persistTimeout) return;
+  persistTimeout = setTimeout(() => {
+    persistTimeout = null;
+    try {
+      const payload: PersistedVisitorData = {
+        totalVisits: visitorState.totalVisits,
+        uniqueVisitorIds: Array.from(visitorState.uniqueVisitorIds).slice(-50000),
+        peakOnline: visitorState.peakOnline,
+        updatedAt: new Date().toISOString(),
+      };
+      fs.writeFileSync(VISITOR_STATS_FILE, JSON.stringify(payload, null, 2), 'utf-8');
+    } catch (err) {
+      console.warn('Failed to persist visitor stats:', (err as Error).message);
+    }
+  }, 400);
+}
+
+interface ActiveVisitorClient {
+  visitorId: string;
+  sessionTabId: string;
+  isAlive: boolean;
+}
+
+const activeVisitorClients = new Map<WebSocket, ActiveVisitorClient>();
+
+function getOnlineNowCount(): number {
+  const uniqueActiveTabs = new Set<string>();
+  let anonymousCount = 0;
+  for (const [, info] of activeVisitorClients.entries()) {
+    if (info.sessionTabId) {
+      uniqueActiveTabs.add(info.sessionTabId);
+    } else {
+      anonymousCount += 1;
+    }
+  }
+  return uniqueActiveTabs.size + anonymousCount;
+}
+
+function getVisitorStatsSnapshot() {
+  const onlineNow = getOnlineNowCount();
+  if (onlineNow > visitorState.peakOnline) {
+    visitorState.peakOnline = onlineNow;
+    schedulePersistVisitorStats();
+  }
+  return {
+    totalVisits: visitorState.totalVisits,
+    uniqueVisitors: visitorState.uniqueVisitorIds.size,
+    onlineNow,
+    peakOnline: visitorState.peakOnline,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function recordVisitIdempotent(visitorId?: string, sessionTabId?: string): boolean {
+  let changed = false;
+
+  const cleanVisitorId = typeof visitorId === 'string' ? visitorId.trim().slice(0, 100) : '';
+  const cleanTabId = typeof sessionTabId === 'string' ? sessionTabId.trim().slice(0, 100) : '';
+
+  if (cleanVisitorId && !visitorState.uniqueVisitorIds.has(cleanVisitorId)) {
+    visitorState.uniqueVisitorIds.add(cleanVisitorId);
+    changed = true;
+  }
+
+  if (cleanTabId) {
+    if (!visitorState.recordedTabIds.has(cleanTabId)) {
+      if (visitorState.recordedTabIds.size > 25000) {
+        visitorState.recordedTabIds.clear();
+      }
+      visitorState.recordedTabIds.add(cleanTabId);
+      visitorState.totalVisits += 1;
+      changed = true;
+    }
+  } else {
+    visitorState.totalVisits += 1;
+    changed = true;
+  }
+
+  if (changed) {
+    schedulePersistVisitorStats();
+  }
+  return changed;
+}
+
+let wss: WebSocketServer | null = null;
+
+function broadcastVisitorStats() {
+  if (!wss) return;
+  const message = JSON.stringify({
+    type: 'visitors:stats',
+    payload: getVisitorStatsSnapshot(),
+  });
+  for (const client of wss.clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      try {
+        client.send(message);
+      } catch {
+        // Ignore send errors on closing sockets
+      }
+    }
+  }
+}
+
+// GET /api/visitors/stats
+app.get('/api/visitors/stats', (_req, res) => {
+  return res.json({
+    success: true,
+    ...getVisitorStatsSnapshot(),
+  });
+});
+
+// POST /api/visitors/hit
+app.post('/api/visitors/hit', (req, res) => {
+  const { visitorId, sessionTabId } = req.body || {};
+  const changed = recordVisitIdempotent(visitorId, sessionTabId);
+  if (changed) {
+    broadcastVisitorStats();
+  }
+  return res.json({
+    success: true,
+    ...getVisitorStatsSnapshot(),
+  });
+});
+
 // Production static assets & SPA fallback
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
@@ -898,6 +1069,108 @@ if (process.env.NODE_ENV === 'production') {
   app.use(vite.middlewares);
 }
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`AgroResiliente server active on http://0.0.0.0:${port}`);
+const httpServer = http.createServer(app);
+
+wss = new WebSocketServer({ server: httpServer, path: '/ws/visitors' });
+
+wss.on('error', (err) => {
+  console.error('WebSocketServer error:', err);
+});
+
+wss.on('connection', (ws) => {
+  activeVisitorClients.set(ws, {
+    visitorId: '',
+    sessionTabId: '',
+    isAlive: true,
+  });
+
+  // Send immediate snapshot on connect
+  try {
+    ws.send(
+      JSON.stringify({
+        type: 'visitors:stats',
+        payload: getVisitorStatsSnapshot(),
+      })
+    );
+  } catch {
+    // Ignore immediate send error
+  }
+  broadcastVisitorStats();
+
+  ws.on('pong', () => {
+    const info = activeVisitorClients.get(ws);
+    if (info) {
+      info.isAlive = true;
+    }
+  });
+
+  ws.on('message', (raw) => {
+    try {
+      const msg = JSON.parse(raw.toString());
+      if (msg && msg.type === 'join') {
+        const info = activeVisitorClients.get(ws);
+        if (info) {
+          info.visitorId = typeof msg.visitorId === 'string' ? msg.visitorId.slice(0, 100) : '';
+          info.sessionTabId = typeof msg.sessionTabId === 'string' ? msg.sessionTabId.slice(0, 100) : '';
+          info.isAlive = true;
+        }
+        recordVisitIdempotent(msg.visitorId, msg.sessionTabId);
+        broadcastVisitorStats();
+      } else if (msg && msg.type === 'ping') {
+        const info = activeVisitorClients.get(ws);
+        if (info) info.isAlive = true;
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'pong', timestamp: Date.now() }));
+        }
+      }
+    } catch {
+      // Ignore malformed JSON payloads
+    }
+  });
+
+  ws.on('close', () => {
+    activeVisitorClients.delete(ws);
+    broadcastVisitorStats();
+  });
+
+  ws.on('error', () => {
+    activeVisitorClients.delete(ws);
+    broadcastVisitorStats();
+  });
+});
+
+// Clean stale WebSocket connections every 30s
+const heartbeatInterval = setInterval(() => {
+  let removedAny = false;
+  for (const [ws, info] of activeVisitorClients.entries()) {
+    if (!info.isAlive) {
+      activeVisitorClients.delete(ws);
+      removedAny = true;
+      try {
+        ws.terminate();
+      } catch {
+        // Ignore termination errors
+      }
+      continue;
+    }
+    info.isAlive = false;
+    try {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.ping();
+      }
+    } catch {
+      // Ignore ping failure; next cycle cleans up
+    }
+  }
+  if (removedAny) {
+    broadcastVisitorStats();
+  }
+}, 30000);
+
+wss.on('close', () => {
+  clearInterval(heartbeatInterval);
+});
+
+httpServer.listen(port, '0.0.0.0', () => {
+  console.log(`AgroResiliente server + WS active on http://0.0.0.0:${port}`);
 });

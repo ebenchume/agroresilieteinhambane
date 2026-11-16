@@ -14,6 +14,7 @@ import {
   CreditCard
 } from 'lucide-react';
 import { AndroidDownloadModal } from './AndroidDownloadModal';
+import { VisitorCounterWidget } from './VisitorCounterWidget';
 
 interface FooterProps {
   onOpenTestRunner: () => void;
@@ -242,6 +243,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTestRunner }) => {
             </ul>
           </div>
         </div>
+
+        {/* Live & Cumulative Visitor Counter */}
+        <VisitorCounterWidget variant="footer" />
 
         {/* Bottom copyright */}
         <div className="pt-6 border-t border-stone-100 dark:border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-400">

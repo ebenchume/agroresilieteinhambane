@@ -13,6 +13,7 @@ import { ProducerMode } from './producer/ProducerMode';
 import { ExtensionistMode } from './extensionist/ExtensionistMode';
 import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
 import { AndroidDownloadModal } from './AndroidDownloadModal';
+import { VisitorCounterWidget } from './VisitorCounterWidget';
 import { MobileService } from '../services/mobileService';
 import { UserProfileType } from '../types/mobileApp';
 import { usePWAInstall } from '../hooks/usePWAInstall';
@@ -147,6 +148,10 @@ export const LandingView: React.FC<LandingViewProps> = ({
               >
                 Plataforma agronómica de campo para produtores, extensionistas e brigadas de inquéritos — com diagnóstico por foto e operação offline no <strong>iPhone, iPad e Android</strong>.
               </p>
+
+              <div className="pt-1">
+                <VisitorCounterWidget variant="compact" sunlightMode={sunlightMode} />
+              </div>
             </div>
 
             {/* Dedicated iOS & Android Field App Install Bar */}
