@@ -75,17 +75,17 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
         <button
           type="button"
           onClick={() => (onOpenFieldSurveys ? onOpenFieldSurveys() : setSurveyModalOpen(true))}
-          className="group p-5 rounded-3xl border-3 border-[#3ddc84] bg-gradient-to-br from-[#022c22] to-[#064e3b] text-white text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl flex flex-col justify-between min-h-[220px]"
+          className="group p-5 rounded-3xl border-2 border-emerald-500/70 bg-[#022c22] text-white text-left transition-all active:scale-[0.985] shadow-sm hover:shadow-lg flex flex-col justify-between min-h-[220px]"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
-              <div className="w-13 h-13 rounded-2xl bg-[#3ddc84] text-stone-950 flex items-center justify-center shadow-md">
-                <ClipboardCheck className="w-7 h-7" />
+              <div className="w-12 h-12 rounded-2xl bg-emerald-400 text-stone-950 flex items-center justify-center shadow-sm">
+                <ClipboardCheck className="w-6 h-6" />
               </div>
 
-              <span className="text-[10px] uppercase tracking-wider font-black px-2.5 py-1 rounded-full bg-[#3ddc84]/20 text-[#3ddc84] border border-[#3ddc84]/40 flex items-center gap-1">
-                <Smartphone className="w-3 h-3" />
-                <span>Android Offline</span>
+              <span className="text-[11px] font-bold text-emerald-300 flex items-center gap-1">
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>iOS &amp; Android Offline</span>
               </span>
             </div>
 
@@ -111,7 +111,7 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
         <button
           type="button"
           onClick={() => setVisitModalOpen(true)}
-          className="group p-5 rounded-3xl border-3 border-emerald-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-emerald-600 flex flex-col justify-between min-h-[220px]"
+          className="group p-5 rounded-3xl border-2 border-emerald-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-emerald-600 flex flex-col justify-between min-h-[220px]"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -146,7 +146,7 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
         <button
           type="button"
           onClick={() => setCalculatorOpen(true)}
-          className="group p-5 rounded-3xl border-3 border-sky-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-sky-600 flex flex-col justify-between min-h-[220px]"
+          className="group p-5 rounded-3xl border-2 border-sky-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-sky-600 flex flex-col justify-between min-h-[220px]"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -181,7 +181,7 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
         <button
           type="button"
           onClick={() => setPestReportOpen(true)}
-          className="group p-5 rounded-3xl border-3 border-amber-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-amber-600 flex flex-col justify-between min-h-[220px]"
+          className="group p-5 rounded-3xl border-2 border-amber-500/80 bg-white dark:bg-stone-900 text-left transition-all transform active:scale-[0.98] shadow-md hover:shadow-xl hover:border-amber-600 flex flex-col justify-between min-h-[220px]"
         >
           <div>
             <div className="flex items-center justify-between mb-4">
@@ -221,7 +221,7 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
           <span>Indicadores de Campo · Província de Inhambane</span>
         </h4>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs tabular-nums">
           <div className="p-3 bg-white dark:bg-stone-800/70 rounded-xl border border-stone-200 dark:border-stone-700">
             <span className="text-[10px] font-semibold text-stone-500 uppercase block">Machambas Monitorizadas</span>
             <p className="text-base font-bold text-stone-900 dark:text-stone-100 mt-0.5">342 machambas</p>

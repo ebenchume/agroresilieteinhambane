@@ -48,7 +48,7 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
             sunlightMode ? 'bg-black text-yellow-400' : 'bg-emerald-900 text-white'
           }`}>
-            <Sun className="w-6 h-6 animate-pulse" />
+            <Sun className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -90,10 +90,10 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
         <button
           type="button"
           onClick={() => setDiagnosisOpen(true)}
-          className={`group p-6 rounded-3xl border-3 text-left transition-all transform active:scale-[0.98] shadow-md flex flex-col justify-between min-h-[220px] ${
+          className={`group p-6 rounded-3xl border-2 text-left transition-all active:scale-[0.985] shadow-sm flex flex-col justify-between min-h-[220px] ${
             sunlightMode
               ? 'bg-stone-950 border-yellow-400 text-white hover:bg-black focus:ring-4 focus:ring-yellow-400'
-              : 'bg-white dark:bg-stone-900 border-emerald-500/80 hover:border-emerald-600 dark:border-emerald-700 hover:shadow-xl'
+              : 'bg-white dark:bg-stone-900 border-emerald-500/80 hover:border-emerald-600 dark:border-emerald-700 hover:shadow-lg'
           }`}
         >
           <div>
@@ -143,10 +143,10 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
         <button
           type="button"
           onClick={() => setAskOpen(true)}
-          className={`group p-6 rounded-3xl border-3 text-left transition-all transform active:scale-[0.98] shadow-md flex flex-col justify-between min-h-[220px] ${
+          className={`group p-6 rounded-3xl border-2 text-left transition-all active:scale-[0.985] shadow-sm flex flex-col justify-between min-h-[220px] ${
             sunlightMode
               ? 'bg-stone-950 border-yellow-400 text-white hover:bg-black focus:ring-4 focus:ring-yellow-400'
-              : 'bg-white dark:bg-stone-900 border-sky-500/80 hover:border-sky-600 dark:border-sky-700 hover:shadow-xl'
+              : 'bg-white dark:bg-stone-900 border-sky-500/80 hover:border-sky-600 dark:border-sky-700 hover:shadow-lg'
           }`}
         >
           <div>
@@ -196,10 +196,10 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
         <button
           type="button"
           onClick={() => setDroughtOpen(true)}
-          className={`group p-6 rounded-3xl border-3 text-left transition-all transform active:scale-[0.98] shadow-md flex flex-col justify-between min-h-[220px] ${
+          className={`group p-6 rounded-3xl border-2 text-left transition-all active:scale-[0.985] shadow-sm flex flex-col justify-between min-h-[220px] ${
             sunlightMode
               ? 'bg-stone-950 border-yellow-400 text-white hover:bg-black focus:ring-4 focus:ring-yellow-400'
-              : 'bg-white dark:bg-stone-900 border-amber-500/80 hover:border-amber-600 dark:border-amber-700 hover:shadow-xl'
+              : 'bg-white dark:bg-stone-900 border-amber-500/80 hover:border-amber-600 dark:border-amber-700 hover:shadow-lg'
           }`}
         >
           <div>
@@ -275,31 +275,30 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
         </div>
       </div>
 
-      {/* Android Offline Machamba Banner */}
-      <div className={`p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 transition-all shadow-sm ${
+      {/* Mobile Offline Machamba Banner (iOS & Android) */}
+      <div className={`p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors shadow-sm ${
         sunlightMode
           ? 'bg-yellow-400 text-black border-yellow-500 font-bold'
-          : 'bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white border-emerald-700/60'
+          : 'bg-[#022c22] text-white border-emerald-700/60'
       }`}>
         <div className="flex items-center gap-3.5">
           <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-            sunlightMode ? 'bg-black text-yellow-400' : 'bg-[#3ddc84] text-stone-950 shadow-md'
+            sunlightMode ? 'bg-black text-yellow-400' : 'bg-emerald-400 text-stone-950'
           }`}>
             <Smartphone className="w-6 h-6" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs uppercase tracking-wider font-black">
-                Instale no seu Android
+            <div className="flex items-center gap-2 text-xs font-bold">
+              <span className="uppercase tracking-wider">
+                App de Campo · iPhone, iPad &amp; Android
               </span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
-                sunlightMode ? 'bg-black text-yellow-400' : 'bg-emerald-700 text-emerald-100'
-              }`}>
-                Sem Rede / Offline
+              <span aria-hidden="true" className="opacity-50">·</span>
+              <span className={sunlightMode ? 'font-black' : 'text-emerald-300'}>
+                Funciona Offline
               </span>
             </div>
             <p className="text-xs opacity-90 mt-0.5 max-w-xl">
-              Grave o AgroResiliente no telemóvel para levar para o meio da machamba. Abre num toque mesmo sem saldo ou sinal.
+              Grave o AgroResiliente no seu iPhone, iPad ou Android para levar para o meio da machamba mesmo sem saldo ou sinal.
             </p>
           </div>
         </div>
@@ -307,14 +306,14 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
         <button
           type="button"
           onClick={() => setAndroidModalOpen(true)}
-          className={`px-4 py-2.5 rounded-xl font-black text-xs transition-all shadow-md flex items-center gap-2 shrink-0 ${
+          className={`min-h-[44px] px-4 py-2.5 rounded-xl font-extrabold text-xs transition-colors shadow-sm flex items-center gap-2 shrink-0 whitespace-nowrap ${
             sunlightMode
               ? 'bg-black text-yellow-400 hover:bg-stone-900'
-              : 'bg-white text-emerald-950 hover:bg-emerald-50 hover:shadow-lg'
+              : 'bg-white text-emerald-950 hover:bg-emerald-50'
           }`}
         >
-          <Smartphone className="w-4 h-4 text-emerald-600" />
-          <span>Baixar & Instalar App Android</span>
+          <Smartphone className="w-4 h-4 text-[#065f46]" />
+          <span>Instalar no iOS / Android</span>
         </button>
       </div>
 

@@ -40,6 +40,7 @@ export default function App() {
 
   const [testRunnerModalOpen, setTestRunnerModalOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [dashboardResetSignal, setDashboardResetSignal] = useState(0);
 
   // Toast feedback
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info'; visible: boolean }>({
@@ -136,7 +137,10 @@ export default function App() {
         onLogout={handleLogout}
         onOpenTestRunner={() => setTestRunnerModalOpen(true)}
         onOpenNotifications={() => setNotificationsOpen(true)}
-        onNavigateHome={() => {}}
+        onNavigateHome={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setDashboardResetSignal(s => s + 1);
+        }}
         unreadCount={unreadNotificationCount}
       />
 
@@ -145,6 +149,7 @@ export default function App() {
         {session ? (
           <Dashboard
             user={session.user}
+            resetSignal={dashboardResetSignal}
             onUpdateUser={(updated) => {
               const current = StorageService.getSession();
               if (current) {
@@ -247,7 +252,7 @@ export default function App() {
 
       {/* Toast Notification Container */}
       {toast.visible && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200 max-w-[calc(100vw-2rem)]">
           <div className={`px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-semibold ${
             toast.type === 'success'
               ? 'bg-emerald-800 text-white shadow-emerald-900/30'
@@ -263,21 +268,21 @@ export default function App() {
         </div>
       )}
 
-      {/* Floating Action Contact Pills (WhatsApp & E-mail) */}
-      <aside aria-label="Contactos rápidos" className="fixed bottom-6 right-6 z-40 flex flex-col gap-2.5">
+      {/* Floating Action Contact Pills (WhatsApp & E-mail) positioned clear of mobile bottom nav */}
+      <aside aria-label="Contactos rápidos" className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-40 flex flex-col gap-2.5 pb-safe">
         <a
           href="https://wa.me/258876473432?text=Ol%C3%A1%2C%20vi%20o%20site%20agroresiliente.co.mz%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%A3o"
           target="_blank"
           rel="noopener"
-          className="w-12 h-12 rounded-full bg-[#25D366] hover:bg-[#1DA851] text-white flex items-center justify-center shadow-lg shadow-emerald-900/20 hover:scale-105 transition-all"
+          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-[#25D366] hover:bg-[#1DA851] text-white flex items-center justify-center shadow-lg shadow-emerald-900/20 hover:scale-105 transition-transform"
           title="Falar no WhatsApp (+258 876 473 432)"
           aria-label="WhatsApp"
         >
-          <MessageCircle className="w-6 h-6" />
+          <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
         </a>
         <a
           href="mailto:ebenchume@sapo.mz?subject=Contacto%20AgroResiliente%20Inhambane"
-          className="w-12 h-12 rounded-full bg-emerald-800 hover:bg-emerald-900 text-white flex items-center justify-center shadow-lg shadow-emerald-900/20 hover:scale-105 transition-all"
+          className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-emerald-800 hover:bg-emerald-900 text-white flex items-center justify-center shadow-lg shadow-emerald-900/20 hover:scale-105 transition-transform"
           title="Enviar E-mail (ebenchume@sapo.mz)"
           aria-label="E-mail"
         >

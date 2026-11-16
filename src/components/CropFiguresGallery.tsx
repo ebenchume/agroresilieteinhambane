@@ -150,6 +150,7 @@ export const CropFiguresGallery: React.FC<CropFiguresGalleryProps> = ({
                   <img
                     src={crop.image}
                     alt={`Figura da cultura de ${crop.name} em Inhambane`}
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
@@ -231,7 +232,7 @@ export const CropFiguresGallery: React.FC<CropFiguresGalleryProps> = ({
                         <Calendar className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                         <span>Ciclo de Colheita:</span>
                       </span>
-                      <strong className="text-stone-950 dark:text-stone-100 font-black text-xs">
+                      <strong className="text-stone-950 dark:text-stone-100 font-black text-xs tabular-nums">
                         ~{crop.cycleDays} dias
                       </strong>
                     </div>
@@ -290,6 +291,7 @@ export const CropFiguresGallery: React.FC<CropFiguresGalleryProps> = ({
               <img
                 src={selectedCrop.image}
                 alt={`Fotografia agronómica de ${selectedCrop.name}`}
+                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />

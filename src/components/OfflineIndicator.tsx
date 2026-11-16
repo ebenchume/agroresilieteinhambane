@@ -39,12 +39,12 @@ export const OfflineIndicator: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2 max-w-[calc(100vw-2rem)]">
+    <div className="fixed bottom-20 md:bottom-5 left-4 z-50 flex flex-col gap-2 max-w-[calc(100vw-6rem)] pb-safe">
       {!isOnline && (
         <div className="flex items-center gap-2.5 rounded-2xl bg-amber-600 px-3.5 py-2.5 text-xs font-bold text-white shadow-xl border border-amber-400">
-          <WifiOff className="w-4 h-4 shrink-0 animate-pulse" />
+          <WifiOff className="w-4 h-4 shrink-0" />
           <span>
-            Modo Offline — Inquéritos guardados no Android ({pendingCount} pendentes).
+            Modo Offline — Inquéritos guardados no dispositivo ({pendingCount} pendentes).
           </span>
         </div>
       )}
@@ -54,12 +54,12 @@ export const OfflineIndicator: React.FC = () => {
           type="button"
           onClick={handleQuickSync}
           disabled={syncing}
-          className="flex items-center gap-2.5 rounded-2xl bg-[#022c22] hover:bg-[#065f46] px-3.5 py-2.5 text-xs font-bold text-white shadow-xl border border-emerald-500/60 transition-all"
+          className="flex items-center gap-2.5 rounded-2xl bg-[#022c22] hover:bg-[#065f46] px-3.5 py-2.5 text-xs font-bold text-white shadow-xl border border-emerald-500/60 transition-colors"
         >
           {syncing ? (
-            <RefreshCw className="w-4 h-4 text-[#3ddc84] animate-spin shrink-0" />
+            <RefreshCw className="w-4 h-4 text-emerald-300 animate-spin shrink-0" />
           ) : (
-            <CloudUpload className="w-4 h-4 text-[#3ddc84] shrink-0" />
+            <CloudUpload className="w-4 h-4 text-emerald-300 shrink-0" />
           )}
           <span>
             {syncing
@@ -71,7 +71,7 @@ export const OfflineIndicator: React.FC = () => {
 
       {justSynced !== null && (
         <div className="flex items-center gap-2 rounded-2xl bg-emerald-800 px-3.5 py-2 text-xs font-bold text-white shadow-xl border border-emerald-500">
-          <CheckCircle2 className="w-4 h-4 text-[#3ddc84] shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
           <span>{justSynced} inquérito(s) sincronizado(s) com o servidor!</span>
         </div>
       )}

@@ -710,14 +710,14 @@ export const FieldSurveyModal: React.FC<FieldSurveyModalProps> = ({
                 <span>Anterior</span>
               </button>
             ) : (
-              <span className="text-[11px] text-stone-500">Funciona 100% offline no Android</span>
+              <span className="text-[11px] text-stone-500">Funciona offline no iPhone, iPad e Android</span>
             )}
 
             {step < 4 ? (
               <button
                 type="button"
                 onClick={handleNext}
-                className="px-5 py-2.5 rounded-xl bg-[#065f46] hover:bg-[#022c22] text-white text-xs font-black flex items-center gap-1.5 shadow-sm"
+                className="min-h-[40px] px-5 py-2.5 rounded-xl bg-[#065f46] hover:bg-[#022c22] text-white text-xs font-black flex items-center gap-1.5 shadow-sm"
               >
                 <span>Continuar</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -727,10 +727,10 @@ export const FieldSurveyModal: React.FC<FieldSurveyModalProps> = ({
                 type="button"
                 onClick={handleSave}
                 disabled={saving}
-                className="px-5 py-2.5 rounded-xl bg-[#065f46] hover:bg-[#022c22] text-white text-xs font-black flex items-center gap-2 shadow-md disabled:opacity-60"
+                className="min-h-[40px] px-5 py-2.5 rounded-xl bg-[#065f46] hover:bg-[#022c22] text-white text-xs font-black flex items-center gap-2 shadow-md disabled:opacity-60"
               >
-                <CheckCircle2 className="w-4 h-4 text-[#3ddc84]" />
-                <span>{saving ? 'A guardar...' : isOnline ? 'Guardar e Sincronizar' : 'Guardar Offline no Android'}</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                <span>{saving ? 'A guardar...' : isOnline ? 'Guardar e Sincronizar' : 'Guardar Offline no Dispositivo'}</span>
               </button>
             )}
           </div>

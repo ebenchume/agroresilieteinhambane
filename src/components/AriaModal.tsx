@@ -63,26 +63,26 @@ export const AriaModal: React.FC<AriaModalProps> = ({
   return (
     <div
       {...underlayProps}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-sm overflow-y-auto pb-safe animate-in fade-in duration-150"
     >
       <div
         ref={overlayRef}
         {...overlayProps}
-        className="w-full flex justify-center py-6 sm:py-10"
+        className="w-full flex justify-center py-2 sm:py-6 my-auto"
       >
         <FocusScope contain restoreFocus autoFocus>
           <div
             ref={dialogRef}
             {...dialogProps}
-            className={`w-full ${maxWidth} bg-white dark:bg-stone-900 rounded-3xl shadow-2xl border border-stone-200 dark:border-stone-800 p-6 sm:p-8 relative transition-all duration-200 animate-in zoom-in-95 ${className}`}
+            className={`w-full ${maxWidth} max-h-[90dvh] overflow-y-auto bg-white dark:bg-stone-900 rounded-2xl sm:rounded-3xl shadow-2xl border border-stone-200 dark:border-stone-800 p-5 sm:p-7 relative transition-all duration-150 animate-in zoom-in-95 ${className}`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Accessible Close Button */}
+            {/* Accessible Close Button (44x44px minimum touch hitbox) */}
             {showCloseButton && (
               <button
                 type="button"
                 onClick={onClose}
-                className="absolute top-5 right-5 p-2 text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 hover:bg-stone-100 dark:hover:bg-stone-800"
+                className="absolute top-3.5 right-3.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-stone-500 hover:text-stone-800 dark:hover:text-stone-100 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 hover:bg-stone-100 dark:hover:bg-stone-800 z-10"
                 aria-label="Fechar janela"
               >
                 <X className="w-5 h-5" />

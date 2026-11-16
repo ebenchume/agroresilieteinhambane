@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Fingerprint, 
@@ -53,6 +53,7 @@ import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
 
 interface DashboardProps {
   user: User;
+  resetSignal?: number;
   onUpdateUser: (updated: User) => void;
   onRequestBiometricSetup: () => void;
   marketPrices: MarketPrice[];
@@ -61,12 +62,19 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({
   user,
+  resetSignal = 0,
   onUpdateUser,
   onRequestBiometricSetup,
   marketPrices,
   onShowToast
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'field-surveys' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+
+  useEffect(() => {
+    if (resetSignal > 0) {
+      setActiveTab('overview');
+    }
+  }, [resetSignal]);
   const [dashProfile, setDashProfile] = useState<UserProfileType>(() => MobileService.getUserProfile());
   const [dashSunlight, setDashSunlight] = useState<boolean>(() => MobileService.getSunlightMode());
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(() => StorageService.getAuditLogs());
@@ -344,20 +352,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         <button
           onClick={() => setActiveTab('mobile-app')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shadow-xs ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'mobile-app'
               ? 'bg-emerald-700 text-white dark:bg-emerald-600 ring-2 ring-emerald-500/40'
               : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60'
           }`}
         >
           <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          <span>App Mobile · Produtor & Extensionista</span>
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>App Mobile (iOS &amp; Android)</span>
         </button>
 
         <button
           onClick={() => setActiveTab('field-surveys')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shadow-xs ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'field-surveys'
               ? 'bg-amber-700 text-white dark:bg-amber-600 ring-2 ring-amber-500/40'
               : 'text-amber-800 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-950/50 bg-amber-50/70 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/60'
@@ -369,29 +376,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         <button
           onClick={() => setActiveTab('crop-figures')}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'crop-figures'
               ? 'bg-emerald-700 text-white dark:bg-emerald-600 shadow-sm'
               : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
           }`}
         >
-          <Sprout className="w-4 h-4 text-emerald-300" />
+          <Sprout className="w-4 h-4 text-emerald-500" />
           <span>Figuras das Culturas</span>
         </button>
 
         <button
           onClick={() => setActiveTab('agro-tips')}
-          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap ${
+          className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'agro-tips'
               ? 'bg-emerald-700 text-white dark:bg-emerald-600 shadow-sm'
               : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
           }`}
         >
-          <Compass className="w-4 h-4 text-emerald-300" />
-          <span className="flex items-center gap-1.5">
-            <span>Dicas AgroResilientes</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          </span>
+          <Compass className="w-4 h-4 text-emerald-500" />
+          <span>Dicas AgroResilientes</span>
         </button>
 
         <button

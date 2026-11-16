@@ -46,7 +46,7 @@ export interface FieldSurveyRecord {
   createdAt: string;
   syncedAt?: string;
   syncStatus: SurveySyncStatus;
-  devicePlatform: 'Android PWA' | 'Web Mobile' | 'Desktop';
+  devicePlatform: 'iPhone / iPad (iOS)' | 'Android PWA' | 'Web Mobile' | 'Desktop';
 }
 
 export interface PhotoDiagnosisResult {

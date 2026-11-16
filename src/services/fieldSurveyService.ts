@@ -285,8 +285,12 @@ function notifySurveyUpdate() {
 export function detectDevicePlatform(): FieldSurveyRecord['devicePlatform'] {
   if (typeof window === 'undefined') return 'Desktop';
   const ua = window.navigator.userAgent.toLowerCase();
+  const isIPad =
+    /ipad/.test(ua) ||
+    (window.navigator.platform === 'MacIntel' && (window.navigator.maxTouchPoints || 0) > 1);
+  if (/iphone|ipod/.test(ua) || isIPad) return 'iPhone / iPad (iOS)';
   if (/android/.test(ua)) return 'Android PWA';
-  if (/iphone|ipad|ipod|mobile/.test(ua)) return 'Web Mobile';
+  if (/mobile/.test(ua)) return 'Web Mobile';
   return 'Desktop';
 }
 

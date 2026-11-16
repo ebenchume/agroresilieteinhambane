@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  ShieldCheck, 
-  Wifi, 
-  WifiOff, 
-  Bell, 
-  FlaskConical, 
-  User as UserIcon, 
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  ShieldCheck,
+  WifiOff,
+  Bell,
+  User as UserIcon,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  FlaskConical
 } from 'lucide-react';
-import { Session, AppNotification } from '../types/auth';
+import { Session } from '../types/auth';
 import { ThemeSelector } from './ThemeSelector';
 import { PWAInstallBanner } from './PWAInstallBanner';
 
@@ -37,6 +36,7 @@ export const Header: React.FC<HeaderProps> = ({
   });
 
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -51,6 +51,29 @@ export const Header: React.FC<HeaderProps> = ({
     };
   }, []);
 
+  // Close user menu on outside click or Escape key
+  useEffect(() => {
+    if (!userDropdownOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [userDropdownOpen]);
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -61,130 +84,119 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 transition-colors">
+    <header className="sticky top-0 z-40 pt-safe bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-b border-stone-200 dark:border-stone-800 transition-colors">
       {/* Offline Alert Strip if disconnected */}
       {!isOnline && (
-        <div className="bg-amber-600 text-white text-xs py-1.5 px-4 text-center font-medium flex items-center justify-center gap-2">
+        <div className="bg-amber-600 text-white text-xs py-1.5 px-4 text-center font-semibold flex items-center justify-center gap-2">
           <WifiOff className="w-3.5 h-3.5 shrink-0" />
-          <span>Modo Offline Ativo — A visualizar dados essenciais e cotações em cache local.</span>
+          <span>Modo Offline — Inquéritos e cotações em cache local.</span>
         </div>
       )}
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        {/* Brand Zone */}
-        <button 
+        {/* Zone 1: Clean single-line Brand Wordmark */}
+        <button
+          type="button"
           onClick={onNavigateHome}
-          className="flex items-center gap-2.5 text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-lg p-1"
+          className="flex items-center gap-2.5 text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-lg py-1 pr-2 whitespace-nowrap shrink-0"
         >
-          <div className="w-9 h-9 rounded-xl bg-emerald-700 dark:bg-emerald-600 text-white flex items-center justify-center shadow-sm shadow-emerald-700/20 group-hover:bg-emerald-800 transition-colors">
-            <span className="font-display font-bold text-lg">A</span>
+          <div className="w-8 h-8 rounded-lg bg-[#065f46] dark:bg-emerald-600 text-white flex items-center justify-center font-display font-extrabold text-base shrink-0">
+            A
           </div>
-          <div>
-            <span className="font-display font-bold text-lg text-stone-900 dark:text-stone-100 tracking-tight block leading-tight">
-              AgroResiliente
-            </span>
-            <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 block tracking-wider uppercase">
-              Inhambane
-            </span>
-          </div>
+          <span className="font-display font-extrabold text-base sm:text-lg text-stone-950 dark:text-white tracking-tight whitespace-nowrap">
+            AgroResiliente
+          </span>
         </button>
 
-        {/* Center / Right controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Online indicator */}
-          <div 
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-stone-600 dark:text-stone-400 rounded-md"
-            title={isOnline ? 'Conectado à rede' : 'Trabalhando offline'}
-          >
-            {isOnline ? (
-              <>
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span>Online</span>
-              </>
-            ) : (
-              <>
-                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                <span>Offline</span>
-              </>
-            )}
-          </div>
-
-          {/* Automated Test Suite Button */}
+        {/* Zone 2 & 3: Utility & Primary Actions (Single-line, clean spacing) */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+          {/* Notifications */}
           <button
-            onClick={onOpenTestRunner}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-stone-700 dark:text-stone-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors border border-stone-200 dark:border-stone-800"
-            title="Executar bateria de testes automatizados"
-          >
-            <FlaskConical className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="hidden md:inline">Testes Integrados</span>
-          </button>
-
-          {/* Push Notifications Button */}
-          <button
+            type="button"
             onClick={onOpenNotifications}
-            className="relative p-2 text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="relative min-w-[40px] min-h-[40px] flex items-center justify-center text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             aria-label="Notificações"
-            title="Ver notificações e alertas push"
+            title="Ver notificações"
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-emerald-600 rounded-full ring-2 ring-white dark:ring-stone-900" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-emerald-600 rounded-full ring-2 ring-white dark:ring-stone-900" />
             )}
           </button>
 
-          {/* Android PWA Install Pill */}
-          <PWAInstallBanner variant="pill" />
+          {/* Compact CI/CD test runner link on desktop */}
+          <button
+            type="button"
+            onClick={onOpenTestRunner}
+            className="hidden lg:flex items-center gap-1.5 min-h-[38px] px-2.5 py-1.5 text-xs font-semibold text-stone-700 dark:text-stone-300 hover:text-emerald-800 dark:hover:text-emerald-300 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors whitespace-nowrap shrink-0"
+            title="Executar bateria de testes"
+          >
+            <FlaskConical className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400 shrink-0" />
+            <span>Testes</span>
+          </button>
 
-          {/* Accessible Theme Selector (Claro / Escuro) */}
-          <ThemeSelector />
+          {/* Theme Switcher */}
+          <ThemeSelector showLabels={false} />
 
-          {/* User Auth Area */}
+          {/* Install Mobile App (iOS / Android) */}
+          <div className="hidden sm:block">
+            <PWAInstallBanner variant="pill" />
+          </div>
+
+          {/* Primary Auth / Profile Control */}
           {session ? (
-            <div className="relative">
+            <div className="relative" ref={dropdownRef}>
               <button
-                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                type="button"
+                aria-expanded={userDropdownOpen}
+                aria-haspopup="menu"
+                onClick={() => setUserDropdownOpen(prev => !prev)}
+                className="flex items-center gap-2 min-h-[40px] px-2 sm:px-3 py-1.5 text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 whitespace-nowrap"
               >
-                <div className="w-7 h-7 rounded-full bg-emerald-700 text-white text-xs font-semibold flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full bg-[#065f46] text-white text-xs font-bold flex items-center justify-center shrink-0">
                   {getInitials(session.user.name)}
                 </div>
-                <div className="hidden sm:block text-left">
-                  <span className="text-xs font-semibold block leading-none">
-                    {session.user.name.split(' ')[0]}
-                  </span>
-                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block leading-none mt-0.5">
-                    {session.user.zone}
-                  </span>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-stone-400 hidden sm:block" />
+                <span className="hidden sm:inline text-xs font-bold max-w-[110px] truncate">
+                  {session.user.name.split(' ')[0]}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-stone-400 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Dropdown Menu */}
               {userDropdownOpen && (
-                <div 
-                  className="absolute right-0 mt-2 w-56 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-lg py-1.5 z-50 text-sm animate-in fade-in slide-in-from-top-1"
-                  onClick={() => setUserDropdownOpen(false)}
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-60 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl shadow-xl py-1.5 z-50 text-sm"
                 >
-                  <div className="px-3.5 py-2 border-b border-stone-100 dark:border-stone-800">
-                    <p className="font-semibold text-stone-900 dark:text-stone-100 truncate">{session.user.name}</p>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 truncate">{session.user.email || session.user.phone}</p>
-                    <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400">
-                      <ShieldCheck className="w-3 h-3" />
+                  <div className="px-3.5 py-2.5 border-b border-stone-100 dark:border-stone-800">
+                    <p className="font-bold text-stone-900 dark:text-stone-100 truncate">{session.user.name}</p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 truncate">{session.user.zone}</p>
+                    <div className="mt-1 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+                      <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
                       <span>{session.user.twoFactorEnabled ? '2FA Ativo' : 'Proteção Padrão'}</span>
                     </div>
                   </div>
 
                   <button
-                    onClick={onNavigateHome}
-                    className="w-full text-left px-3.5 py-2 hover:bg-stone-50 dark:hover:bg-stone-800 flex items-center gap-2 text-stone-700 dark:text-stone-300"
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      onNavigateHome();
+                    }}
+                    className="w-full text-left px-3.5 py-2.5 hover:bg-stone-50 dark:hover:bg-stone-800 flex items-center gap-2 text-stone-700 dark:text-stone-300 text-xs font-semibold"
                   >
                     <UserIcon className="w-4 h-4 text-stone-400" />
                     <span>Painel do Produtor</span>
                   </button>
 
                   <button
-                    onClick={onLogout}
-                    className="w-full text-left px-3.5 py-2 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 text-red-600 dark:text-red-400"
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      onLogout();
+                    }}
+                    className="w-full text-left px-3.5 py-2.5 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 text-red-600 dark:text-red-400 text-xs font-semibold"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Terminar Sessão</span>
@@ -193,16 +205,18 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 shrink-0">
               <button
+                type="button"
                 onClick={() => onOpenAuth('login')}
-                className="px-3 py-1.5 text-xs font-semibold text-stone-700 dark:text-stone-300 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                className="min-h-[38px] px-3 py-1.5 text-xs font-bold text-stone-700 dark:text-stone-300 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors whitespace-nowrap"
               >
                 Entrar
               </button>
               <button
+                type="button"
                 onClick={() => onOpenAuth('register')}
-                className="px-3.5 py-1.5 text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 rounded-lg transition-colors shadow-sm shadow-emerald-700/20"
+                className="min-h-[38px] px-3.5 py-1.5 text-xs font-bold text-white bg-[#065f46] hover:bg-[#022c22] dark:bg-emerald-600 dark:hover:bg-emerald-700 rounded-lg transition-colors whitespace-nowrap"
               >
                 Criar Conta
               </button>

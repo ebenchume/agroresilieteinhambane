@@ -69,6 +69,19 @@
   box-shadow: 0 0 30px -5px rgba(245, 158, 11, 0.4);
 }
 
+/* Safe area & mobile web app ergonomics (iPhone notch / iPadOS / Android) */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Custom transitions and scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -83,6 +96,15 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(120, 113, 108, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @media print {

@@ -96,12 +96,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTestRunner }) => {
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-200 dark:border-stone-800 pb-4">
             <div>
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                  Parcerias Estratégicas para o Desenvolvimento Agrário
-                </span>
-              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block">
+                Parcerias Estratégicas para o Desenvolvimento Agrário
+              </span>
               <h3 className="text-lg font-bold font-serif text-stone-900 dark:text-stone-100 mt-1">
                 Parceiros Institucionais & Patrocinadores Oficiais
               </h3>
@@ -219,8 +216,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenTestRunner }) => {
                   onClick={() => setAndroidModalOpen(true)}
                   className="hover:text-emerald-700 dark:hover:text-emerald-400 text-left font-bold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5"
                 >
-                  <Smartphone className="w-3.5 h-3.5 text-[#3ddc84]" />
-                  <span>Baixar App Android (.apk / Offline)</span>
+                  <Smartphone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>Instalar App iOS (iPhone/iPad) &amp; Android</span>
                 </button>
               </li>
               <li>
