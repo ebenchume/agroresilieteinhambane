@@ -7,13 +7,17 @@ import {
   ClipboardList,
   ClipboardCheck,
   Compass,
-  Ruler
+  Ruler,
+  Map as MapIcon,
+  Send
 } from 'lucide-react';
 import { CropFiguresGallery } from './CropFiguresGallery';
 import { ProducerMode } from './producer/ProducerMode';
 import { ExtensionistMode } from './extensionist/ExtensionistMode';
 import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
 import { MachambaAreaMeasureSection } from './field/MachambaAreaMeasureSection';
+import { ProvincialPestAreaMapSection } from './field/ProvincialPestAreaMapSection';
+import { ClimateAlertGatewaySection } from './alerts/ClimateAlertGatewaySection';
 import { AndroidDownloadModal } from './AndroidDownloadModal';
 import { VisitorCounterWidget } from './VisitorCounterWidget';
 import { MobileService } from '../services/mobileService';
@@ -32,9 +36,10 @@ export const LandingView: React.FC<LandingViewProps> = ({
   const [installModalOpen, setInstallModalOpen] = useState(false);
   const [installPlatform, setInstallPlatform] = useState<'ios' | 'android' | undefined>(undefined);
 
-  // Mobile Profile Selector State ('produtor' | 'extensionista' | 'inquiridor')
+  // Mobile Profile Selector State ('produtor' | 'extensionista' | 'inquiridor' | 'medicao')
   const [userProfile, setUserProfile] = useState<UserProfileType>(() => MobileService.getUserProfile());
   const [sunlightMode, setSunlightMode] = useState<boolean>(() => MobileService.getSunlightMode());
+  const [provincialTab, setProvincialTab] = useState<'map' | 'alerts'>('map');
 
   // USSD / SMS interactive state
   const [activeChannel, setActiveChannel] = useState<'ussd' | 'sms'>('ussd');
@@ -393,6 +398,55 @@ export const LandingView: React.FC<LandingViewProps> = ({
             <MachambaAreaMeasureSection sunlightMode={sunlightMode} />
           ) : (
             <FieldDataCollectionSection />
+          )}
+        </div>
+      </section>
+
+      {/* 2B. PROVINCIAL PEST/AREA MAP & SMS/WHATSAPP CLIMATE GATEWAY */}
+      <section className="py-10 border-t border-stone-200 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-950/60">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="text-xs font-bold text-[#065f46] dark:text-emerald-400">
+                Monitorização Provincial · 14 Distritos de Inhambane
+              </span>
+              <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-stone-950 dark:text-white tracking-tight">
+                Vigilância de Pragas, Áreas &amp; Alertas Climáticos
+              </h2>
+            </div>
+
+            <div className="flex items-center p-1 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-xs font-bold shrink-0">
+              <button
+                type="button"
+                onClick={() => setProvincialTab('map')}
+                className={`min-h-[40px] px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                  provincialTab === 'map'
+                    ? 'bg-[#065f46] text-white'
+                    : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+                }`}
+              >
+                <MapIcon className="w-4 h-4" />
+                <span>Mapa de Pragas &amp; Áreas</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setProvincialTab('alerts')}
+                className={`min-h-[40px] px-3.5 py-2 rounded-lg flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                  provincialTab === 'alerts'
+                    ? 'bg-[#065f46] text-white'
+                    : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+                }`}
+              >
+                <Send className="w-4 h-4" />
+                <span>Alertas SMS / WhatsApp</span>
+              </button>
+            </div>
+          </div>
+
+          {provincialTab === 'map' ? (
+            <ProvincialPestAreaMapSection />
+          ) : (
+            <ClimateAlertGatewaySection />
           )}
         </div>
       </section>

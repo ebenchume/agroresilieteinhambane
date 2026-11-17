@@ -29,7 +29,9 @@ import {
   Camera,
   ClipboardList,
   ClipboardCheck,
-  Ruler
+  Ruler,
+  Map as MapIcon,
+  Send
 } from 'lucide-react';
 import { User, AuditLog, MarketPrice } from '../types/auth';
 import { StorageService } from '../services/storage';
@@ -52,6 +54,8 @@ import { MobileService } from '../services/mobileService';
 import { UserProfileType } from '../types/mobileApp';
 import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
 import { MachambaAreaMeasureSection } from './field/MachambaAreaMeasureSection';
+import { ProvincialPestAreaMapSection } from './field/ProvincialPestAreaMapSection';
+import { ClimateAlertGatewaySection } from './alerts/ClimateAlertGatewaySection';
 
 interface DashboardProps {
   user: User;
@@ -70,7 +74,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   marketPrices,
   onShowToast
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'field-surveys' | 'area-measure' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'field-surveys' | 'area-measure' | 'provincial-map' | 'climate-alerts' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
 
   useEffect(() => {
     if (resetSignal > 0) {
@@ -389,6 +393,30 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('provincial-map')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'provincial-map'
+              ? 'bg-rose-700 text-white dark:bg-rose-600 ring-2 ring-rose-500/40'
+              : 'text-rose-800 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-950/50 bg-rose-50/70 dark:bg-rose-950/30 border border-rose-300 dark:border-rose-800/60'
+          }`}
+        >
+          <MapIcon className="w-4 h-4" />
+          <span>Mapa Pragas &amp; Áreas</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('climate-alerts')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'climate-alerts'
+              ? 'bg-emerald-700 text-white dark:bg-emerald-600 ring-2 ring-emerald-500/40'
+              : 'text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/60'
+          }`}
+        >
+          <Send className="w-4 h-4" />
+          <span>Alertas SMS / WhatsApp</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('crop-figures')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'crop-figures'
@@ -652,6 +680,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {activeTab === 'area-measure' && (
         <div className="space-y-6">
           <MachambaAreaMeasureSection onShowToast={onShowToast} />
+        </div>
+      )}
+
+      {/* TAB: MAPA PROVINCIAL DE PRAGAS & ÁREAS CULTIVADAS */}
+      {activeTab === 'provincial-map' && (
+        <div className="space-y-6">
+          <ProvincialPestAreaMapSection onShowToast={onShowToast} />
+        </div>
+      )}
+
+      {/* TAB: ALERTAS CLIMÁTICOS SMS / WHATSAPP */}
+      {activeTab === 'climate-alerts' && (
+        <div className="space-y-6">
+          <ClimateAlertGatewaySection onShowToast={onShowToast} />
         </div>
       )}
 

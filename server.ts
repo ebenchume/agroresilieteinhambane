@@ -887,6 +887,573 @@ app.get('/api/field-surveys', (_req, res) => {
 });
 
 // ============================================================================
+// REAL SMS (VODACOM / TMCEL / MOVITEL) & WHATSAPP CLIMATE ALERT GATEWAY
+// ============================================================================
+const ALERTS_STORE_FILE = path.join(__dirname, '.alerts-store.json');
+
+type MozOperator = 'Vodacom' | 'Tmcel' | 'Movitel' | 'Outro';
+type AlertChannel = 'sms' | 'whatsapp' | 'ambos';
+type ClimateAlertType = 'ciclone' | 'rajadas' | 'seca' | 'chuva_intensa' | 'praga';
+
+interface AlertSubscriber {
+  id: string;
+  name: string;
+  phone: string; // normalized +258...
+  operator: MozOperator;
+  district: string;
+  locality: string;
+  crop: string;
+  channel: AlertChannel;
+  active: boolean;
+  createdAt: string;
+}
+
+interface AlertDispatchLog {
+  id: string;
+  district: string;
+  alertType: ClimateAlertType;
+  severity: 'Crítico' | 'Alerta' | 'Preventivo';
+  message: string;
+  channel: AlertChannel;
+  totalRecipients: number;
+  apiDeliveredCount: number;
+  providerUsed: string;
+  operatorBreakdown: Record<MozOperator, number>;
+  createdAt: string;
+}
+
+const DISTRICT_COORDS_SERVER: Record<string, { lat: number; lng: number }> = {
+  'Homoíne': { lat: -23.9482, lng: 35.2514 },
+  'Maxixe': { lat: -23.8597, lng: 35.3472 },
+  'Panda': { lat: -24.0621, lng: 34.7291 },
+  'Massinga': { lat: -23.3308, lng: 35.3742 },
+  'Morrumbene': { lat: -23.6694, lng: 35.3678 },
+  'Zavala': { lat: -24.7167, lng: 34.7500 },
+  'Inharrime': { lat: -24.4767, lng: 35.0264 },
+  'Jangamo': { lat: -24.1000, lng: 35.3167 },
+  'Inhambane-Cidade': { lat: -23.8650, lng: 35.3833 },
+  'Funhalouro': { lat: -23.0833, lng: 34.3833 },
+  'Mabote': { lat: -22.0500, lng: 34.1167 },
+  'Vilankulo': { lat: -22.0000, lng: 35.3167 },
+  'Inhassoro': { lat: -21.5333, lng: 35.2000 },
+  'Govuro': { lat: -20.9833, lng: 35.0167 }
+};
+
+function normalizeMozPhone(raw: string): string {
+  const digits = String(raw || '').replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('258') && digits.length >= 12) return `+${digits}`;
+  if (digits.length === 9 && digits.startsWith('8')) return `+258${digits}`;
+  if (digits.startsWith('00258')) return `+${digits.slice(2)}`;
+  return digits.startsWith('258') ? `+${digits}` : `+258${digits}`;
+}
+
+function detectMozOperator(normalizedPhone: string): MozOperator {
+  const local = normalizedPhone.replace(/^\+258/, '');
+  if (local.startsWith('84') || local.startsWith('85')) return 'Vodacom';
+  if (local.startsWith('82') || local.startsWith('83')) return 'Tmcel';
+  if (local.startsWith('86') || local.startsWith('87')) return 'Movitel';
+  return 'Outro';
+}
+
+const alertsState: {
+  subscribers: AlertSubscriber[];
+  dispatchLogs: AlertDispatchLog[];
+} = {
+  subscribers: [
+    {
+      id: 'sub_hm_01',
+      name: 'Celeste Mondlane',
+      phone: '+258845621904',
+      operator: 'Vodacom',
+      district: 'Homoíne',
+      locality: 'Pembe',
+      crop: 'Mandioca',
+      channel: 'ambos',
+      active: true,
+      createdAt: '2026-11-01T08:30:00.000Z'
+    },
+    {
+      id: 'sub_hm_02',
+      name: 'Armando Sitoe',
+      phone: '+258876473432',
+      operator: 'Movitel',
+      district: 'Homoíne',
+      locality: 'Chizapela',
+      crop: 'Milho',
+      channel: 'sms',
+      active: true,
+      createdAt: '2026-11-02T09:15:00.000Z'
+    },
+    {
+      id: 'sub_pd_01',
+      name: 'Joaquina Macamo',
+      phone: '+258823410982',
+      operator: 'Tmcel',
+      district: 'Panda',
+      locality: 'Massalane',
+      crop: 'Mapira',
+      channel: 'sms',
+      active: true,
+      createdAt: '2026-11-03T10:00:00.000Z'
+    },
+    {
+      id: 'sub_ms_01',
+      name: 'Filipe Chivambo',
+      phone: '+258849102344',
+      operator: 'Vodacom',
+      district: 'Massinga',
+      locality: 'Chicomo',
+      crop: 'Caju',
+      channel: 'whatsapp',
+      active: true,
+      createdAt: '2026-11-05T11:20:00.000Z'
+    }
+  ],
+  dispatchLogs: []
+};
+
+try {
+  if (fs.existsSync(ALERTS_STORE_FILE)) {
+    const raw = fs.readFileSync(ALERTS_STORE_FILE, 'utf-8');
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed.subscribers)) alertsState.subscribers = parsed.subscribers;
+    if (Array.isArray(parsed.dispatchLogs)) alertsState.dispatchLogs = parsed.dispatchLogs;
+  }
+} catch (err) {
+  console.warn('Could not load alerts store:', (err as Error).message);
+}
+
+function persistAlertsStore() {
+  try {
+    fs.writeFileSync(ALERTS_STORE_FILE, JSON.stringify(alertsState, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('Failed to persist alerts store:', (err as Error).message);
+  }
+}
+
+function getGatewayCapabilities() {
+  const hasTwilio = Boolean(
+    process.env.TWILIO_ACCOUNT_SID &&
+      process.env.TWILIO_AUTH_TOKEN &&
+      (process.env.TWILIO_PHONE_NUMBER || process.env.TWILIO_WHATSAPP_NUMBER)
+  );
+  const hasAfricasTalking = Boolean(
+    process.env.AFRICASTALKING_API_KEY && process.env.AFRICASTALKING_USERNAME
+  );
+  const hasWhatsAppCloud = Boolean(
+    process.env.WHATSAPP_CLOUD_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID
+  );
+
+  return {
+    smsGatewayConfigured: hasTwilio || hasAfricasTalking,
+    whatsappGatewayConfigured: hasTwilio && Boolean(process.env.TWILIO_WHATSAPP_NUMBER) || hasWhatsAppCloud,
+    providers: {
+      twilio: hasTwilio,
+      africasTalking: hasAfricasTalking,
+      whatsappCloud: hasWhatsAppCloud
+    }
+  };
+}
+
+// GET /api/alerts/overview
+app.get('/api/alerts/overview', (_req, res) => {
+  return res.json({
+    success: true,
+    gateway: getGatewayCapabilities(),
+    subscribers: alertsState.subscribers,
+    dispatchLogs: alertsState.dispatchLogs.slice(0, 30)
+  });
+});
+
+// POST /api/alerts/subscribers
+app.post('/api/alerts/subscribers', (req, res) => {
+  const { name, phone, district = 'Homoíne', locality = '', crop = 'Milho', channel = 'ambos' } = req.body || {};
+  const normalized = normalizeMozPhone(phone);
+  if (!name || !String(name).trim() || normalized.length < 12) {
+    return res.status(400).json({
+      success: false,
+      error: 'Informe o nome completo e um número moçambicano válido (+258 82/83/84/85/86/87).'
+    });
+  }
+
+  const subscriber: AlertSubscriber = {
+    id: `sub_${Date.now().toString(36)}`,
+    name: String(name).trim().slice(0, 80),
+    phone: normalized,
+    operator: detectMozOperator(normalized),
+    district: String(district),
+    locality: String(locality || district).trim().slice(0, 60),
+    crop: String(crop || 'Milho'),
+    channel: (['sms', 'whatsapp', 'ambos'].includes(channel) ? channel : 'ambos') as AlertChannel,
+    active: true,
+    createdAt: new Date().toISOString()
+  };
+
+  alertsState.subscribers.unshift(subscriber);
+  persistAlertsStore();
+
+  return res.json({ success: true, subscriber });
+});
+
+// PATCH /api/alerts/subscribers/:id
+app.patch('/api/alerts/subscribers/:id', (req, res) => {
+  const { id } = req.params;
+  const target = alertsState.subscribers.find(s => s.id === id);
+  if (!target) {
+    return res.status(404).json({ success: false, error: 'Subscritor não encontrado.' });
+  }
+  if (typeof req.body?.active === 'boolean') {
+    target.active = req.body.active;
+  }
+  if (req.body?.channel && ['sms', 'whatsapp', 'ambos'].includes(req.body.channel)) {
+    target.channel = req.body.channel;
+  }
+  persistAlertsStore();
+  return res.json({ success: true, subscriber: target });
+});
+
+// DELETE /api/alerts/subscribers/:id
+app.delete('/api/alerts/subscribers/:id', (req, res) => {
+  const { id } = req.params;
+  alertsState.subscribers = alertsState.subscribers.filter(s => s.id !== id);
+  persistAlertsStore();
+  return res.json({ success: true });
+});
+
+// GET /api/alerts/climate-check?district=Homoíne
+app.get('/api/alerts/climate-check', async (req, res) => {
+  const district = String(req.query.district || 'Homoíne');
+  const coords = DISTRICT_COORDS_SERVER[district] || DISTRICT_COORDS_SERVER['Homoíne'];
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=temperature_2m_max,precipitation_sum,wind_speed_10m_max,wind_gusts_10m_max,et0_fao_evapotranspiration&timezone=Africa%2FMaputo&forecast_days=7`;
+    const response = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`Open-Meteo HTTP ${response.status}`);
+    const data = await response.json();
+    const daily = data.daily || {};
+
+    const maxGusts = Math.max(...((daily.wind_gusts_10m_max as number[]) || [0]));
+    const maxWind = Math.max(...((daily.wind_speed_10m_max as number[]) || [0]));
+    const maxDailyRain = Math.max(...((daily.precipitation_sum as number[]) || [0]));
+    const total7dRain = ((daily.precipitation_sum as number[]) || []).reduce((a, b) => a + (b || 0), 0);
+    const maxTemp = Math.max(...((daily.temperature_2m_max as number[]) || [28]));
+    const avgEt0 =
+      ((daily.et0_fao_evapotranspiration as number[]) || [3.5]).reduce((a, b) => a + (b || 0), 0) /
+      Math.max(1, ((daily.et0_fao_evapotranspiration as number[]) || [3.5]).length);
+
+    const detectedHazards: Array<{
+      type: ClimateAlertType;
+      severity: 'Crítico' | 'Alerta' | 'Preventivo';
+      title: string;
+      metricSummary: string;
+      suggestedSms: string;
+    }> = [];
+
+    if (maxGusts >= 65 || (maxDailyRain >= 60 && maxWind >= 45)) {
+      detectedHazards.push({
+        type: 'ciclone',
+        severity: 'Crítico',
+        title: `Risco Severo de Ciclone / Vento Extremo em ${district}`,
+        metricSummary: `Rajadas previstas até ${Math.round(maxGusts)} km/h e chuva até ${maxDailyRain.toFixed(0)} mm/dia`,
+        suggestedSms: `ALERTA INAM/SDAE ${district}: Rajadas fortes (${Math.round(maxGusts)} km/h) e chuva intensa nos próximos dias. Proteja viveiros, estacas de mandioca, sacos de colheita e animais.`
+      });
+    } else if (maxGusts >= 42 || maxWind >= 30) {
+      detectedHazards.push({
+        type: 'rajadas',
+        severity: 'Alerta',
+        title: `Rajadas de Vento Fortes em ${district}`,
+        metricSummary: `Rajadas previstas até ${Math.round(maxGusts)} km/h (vento sustentado ${Math.round(maxWind)} km/h)`,
+        suggestedSms: `AVISO AGRO ${district}: Ventos e rajadas até ${Math.round(maxGusts)} km/h. Suspenda pulverizações, reforce escoras em bananeiras e proteja cajueiros jovens.`
+      });
+    }
+
+    if (total7dRain < 5 && (avgEt0 >= 4.0 || maxTemp >= 31)) {
+      detectedHazards.push({
+        type: 'seca',
+        severity: total7dRain < 1 && avgEt0 >= 4.8 ? 'Crítico' : 'Alerta',
+        title: `Seca / Veranico Prolongado em ${district}`,
+        metricSummary: `Apenas ${total7dRain.toFixed(1)} mm previstos em 7 dias · Evapotranspiração ${avgEt0.toFixed(1)} mm/dia · Máx ${Math.round(maxTemp)}°C`,
+        suggestedSms: `ALERTA SECA ${district}: 7 dias quase sem chuva (${total7dRain.toFixed(1)} mm) e calor até ${Math.round(maxTemp)}°C. Aplique mulching urgente no milho e regue só antes das 08h30.`
+      });
+    }
+
+    if (maxDailyRain >= 35 && maxGusts < 65) {
+      detectedHazards.push({
+        type: 'chuva_intensa',
+        severity: 'Alerta',
+        title: `Chuva Intensa / Risco em Baixas de ${district}`,
+        metricSummary: `Precipitação diária prevista até ${maxDailyRain.toFixed(1)} mm`,
+        suggestedSms: `AVISO CHUVA ${district}: Previsão de ${maxDailyRain.toFixed(0)} mm num só dia. Limpe valas de drenagem nas baixas e proteja amendoim colhido da humidade.`
+      });
+    }
+
+    if (detectedHazards.length === 0) {
+      detectedHazards.push({
+        type: 'seca',
+        severity: 'Preventivo',
+        title: `Condições Normais em ${district} (Boletim Preventivo)`,
+        metricSummary: `Chuva 7d: ${total7dRain.toFixed(1)} mm · Rajadas máx: ${Math.round(maxGusts)} km/h · Temp máx: ${Math.round(maxTemp)}°C`,
+        suggestedSms: `BOLETIM ${district}: Tempo estável (${Math.round(maxTemp)}°C, ${total7dRain.toFixed(1)} mm chuva prevista). Bom momento para sacha, mulching e inspeção de pragas.`
+      });
+    }
+
+    return res.json({
+      success: true,
+      district,
+      source: 'Open-Meteo Live',
+      metrics: {
+        maxGustsKmH: Math.round(maxGusts),
+        maxWindKmH: Math.round(maxWind),
+        maxDailyRainMm: Number(maxDailyRain.toFixed(1)),
+        total7dRainMm: Number(total7dRain.toFixed(1)),
+        maxTempC: Math.round(maxTemp),
+        avgEt0Mm: Number(avgEt0.toFixed(1))
+      },
+      hazards: detectedHazards
+    });
+  } catch (err) {
+    return res.json({
+      success: true,
+      district,
+      source: 'Offline / Fallback',
+      metrics: {
+        maxGustsKmH: 26,
+        maxWindKmH: 18,
+        maxDailyRainMm: 4.0,
+        total7dRainMm: 6.5,
+        maxTempC: 30,
+        avgEt0Mm: 4.1
+      },
+      hazards: [
+        {
+          type: 'seca' as ClimateAlertType,
+          severity: 'Preventivo' as const,
+          title: `Monitorização Preventiva de Seca — ${district}`,
+          metricSummary: 'Sem acesso externo à API Open-Meteo neste instante; boletim preventivo ativo.',
+          suggestedSms: `AGRO ${district}: Mantenha cobertura morta (mulching) nas linhas e inspecione folhas jovens contra lagarta-do-cartucho. Dúvidas: SDAE local.`
+        }
+      ],
+      errorDetails: (err as Error).message
+    });
+  }
+});
+
+// POST /api/alerts/dispatch
+app.post('/api/alerts/dispatch', async (req, res) => {
+  const {
+    district = 'Homoíne',
+    alertType = 'seca',
+    severity = 'Alerta',
+    message = '',
+    channel = 'ambos'
+  } = req.body || {};
+
+  const cleanMessage = String(message || '').trim().slice(0, 480);
+  if (!cleanMessage) {
+    return res.status(400).json({ success: false, error: 'Escreva a mensagem do alerta climático.' });
+  }
+
+  const targetSubscribers = alertsState.subscribers.filter(s => {
+    if (!s.active) return false;
+    const matchDistrict = district === 'Todos (Província)' || s.district === district;
+    if (!matchDistrict) return false;
+    if (channel === 'ambos') return true;
+    return s.channel === 'ambos' || s.channel === channel;
+  });
+
+  const operatorBreakdown: Record<MozOperator, number> = {
+    Vodacom: 0,
+    Tmcel: 0,
+    Movitel: 0,
+    Outro: 0
+  };
+  for (const sub of targetSubscribers) {
+    operatorBreakdown[sub.operator] = (operatorBreakdown[sub.operator] || 0) + 1;
+  }
+
+  let apiDeliveredCount = 0;
+  const providerTags: string[] = [];
+
+  const sendSmsViaApi = channel === 'sms' || channel === 'ambos';
+  const sendWaViaApi = channel === 'whatsapp' || channel === 'ambos';
+
+  // 1. Real Twilio REST Integration (if configured in .env)
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    const sid = process.env.TWILIO_ACCOUNT_SID;
+    const token = process.env.TWILIO_AUTH_TOKEN;
+    const authHeader = 'Basic ' + Buffer.from(`${sid}:${token}`).toString('base64');
+
+    for (const sub of targetSubscribers) {
+      if (sendSmsViaApi && (sub.channel === 'sms' || sub.channel === 'ambos') && process.env.TWILIO_PHONE_NUMBER) {
+        try {
+          const bodyParams = new URLSearchParams({
+            To: sub.phone,
+            From: process.env.TWILIO_PHONE_NUMBER,
+            Body: cleanMessage
+          });
+          const resp = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+            method: 'POST',
+            headers: {
+              Authorization: authHeader,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: bodyParams.toString()
+          });
+          if (resp.ok) apiDeliveredCount += 1;
+        } catch {
+          // Continue batch on individual failure
+        }
+      }
+
+      if (sendWaViaApi && (sub.channel === 'whatsapp' || sub.channel === 'ambos') && process.env.TWILIO_WHATSAPP_NUMBER) {
+        try {
+          const fromWa = process.env.TWILIO_WHATSAPP_NUMBER.startsWith('whatsapp:')
+            ? process.env.TWILIO_WHATSAPP_NUMBER
+            : `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`;
+          const bodyParams = new URLSearchParams({
+            To: `whatsapp:${sub.phone}`,
+            From: fromWa,
+            Body: cleanMessage
+          });
+          const resp = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+            method: 'POST',
+            headers: {
+              Authorization: authHeader,
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: bodyParams.toString()
+          });
+          if (resp.ok) apiDeliveredCount += 1;
+        } catch {
+          // Continue batch
+        }
+      }
+    }
+    providerTags.push('Twilio SMS/WhatsApp');
+  }
+
+  // 2. Real Africa's Talking SMS Integration (Vodacom/Tmcel/Movitel MZ)
+  if (
+    sendSmsViaApi &&
+    !process.env.TWILIO_ACCOUNT_SID &&
+    process.env.AFRICASTALKING_API_KEY &&
+    process.env.AFRICASTALKING_USERNAME
+  ) {
+    const smsRecipients = targetSubscribers
+      .filter(s => s.channel === 'sms' || s.channel === 'ambos')
+      .map(s => s.phone);
+
+    if (smsRecipients.length > 0) {
+      try {
+        const params = new URLSearchParams({
+          username: process.env.AFRICASTALKING_USERNAME,
+          to: smsRecipients.join(','),
+          message: cleanMessage
+        });
+        if (process.env.AFRICASTALKING_SENDER_ID) {
+          params.set('from', process.env.AFRICASTALKING_SENDER_ID);
+        }
+        const resp = await fetch('https://api.africastalking.com/version1/messaging', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            apiKey: process.env.AFRICASTALKING_API_KEY
+          },
+          body: params.toString()
+        });
+        if (resp.ok) {
+          apiDeliveredCount += smsRecipients.length;
+        }
+      } catch {
+        // Ignore transient external error
+      }
+    }
+    providerTags.push("Africa's Talking MZ");
+  }
+
+  // 3. Real Meta WhatsApp Cloud API Integration
+  if (
+    sendWaViaApi &&
+    !process.env.TWILIO_WHATSAPP_NUMBER &&
+    process.env.WHATSAPP_CLOUD_TOKEN &&
+    process.env.WHATSAPP_PHONE_NUMBER_ID
+  ) {
+    const waRecipients = targetSubscribers.filter(
+      s => s.channel === 'whatsapp' || s.channel === 'ambos'
+    );
+    for (const sub of waRecipients) {
+      try {
+        const resp = await fetch(
+          `https://graph.facebook.com/v21.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${process.env.WHATSAPP_CLOUD_TOKEN}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              messaging_product: 'whatsapp',
+              to: sub.phone.replace(/\+/g, ''),
+              type: 'text',
+              text: { body: cleanMessage }
+            })
+          }
+        );
+        if (resp.ok) apiDeliveredCount += 1;
+      } catch {
+        // Continue batch
+      }
+    }
+    providerTags.push('Meta WhatsApp Cloud');
+  }
+
+  const providerUsed =
+    providerTags.length > 0
+      ? providerTags.join(' + ')
+      : 'Envio Direto WhatsApp / SIM (Vodacom·Tmcel·Movitel)';
+
+  const logEntry: AlertDispatchLog = {
+    id: `ALT-${Date.now().toString(36).toUpperCase()}`,
+    district: String(district),
+    alertType: alertType as ClimateAlertType,
+    severity: (['Crítico', 'Alerta', 'Preventivo'].includes(severity) ? severity : 'Alerta') as
+      | 'Crítico'
+      | 'Alerta'
+      | 'Preventivo',
+    message: cleanMessage,
+    channel: channel as AlertChannel,
+    totalRecipients: targetSubscribers.length,
+    apiDeliveredCount,
+    providerUsed,
+    operatorBreakdown,
+    createdAt: new Date().toISOString()
+  };
+
+  alertsState.dispatchLogs.unshift(logEntry);
+  alertsState.dispatchLogs = alertsState.dispatchLogs.slice(0, 100);
+  persistAlertsStore();
+
+  // Build direct per-recipient WhatsApp & SIM SMS fallback links for immediate manual/offline extensionist dispatch
+  const directLinks = targetSubscribers.map(sub => ({
+    id: sub.id,
+    name: sub.name,
+    phone: sub.phone,
+    operator: sub.operator,
+    district: sub.district,
+    whatsappUrl: `https://wa.me/${sub.phone.replace(/\D/g, '')}?text=${encodeURIComponent(cleanMessage)}`,
+    smsUrl: `sms:${sub.phone}?body=${encodeURIComponent(cleanMessage)}`
+  }));
+
+  return res.json({
+    success: true,
+    log: logEntry,
+    directLinks
+  });
+});
+
+// ============================================================================
 // REAL SERVER-AUTHORITATIVE VISITOR COUNTER & LIVE ONLINE PRESENCE (WebSocket)
 // ============================================================================
 const VISITOR_STATS_FILE = path.join(__dirname, '.visitor-stats.json');
