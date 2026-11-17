@@ -11,8 +11,10 @@ import {
   Copy, 
   Check, 
   HelpCircle,
-  Wheat
+  Wheat,
+  Ruler
 } from 'lucide-react';
+import { MachambaAreaMeasureModal } from '../field/MachambaAreaMeasureModal';
 
 interface SeedCalculatorModalProps {
   isOpen: boolean;
@@ -161,6 +163,7 @@ export const SeedCalculatorModal: React.FC<SeedCalculatorModalProps> = ({
   const [unitMode, setUnitMode] = useState<'ha' | 'canteiros'>('ha');
   const [inputValue, setInputValue] = useState<number>(1);
   const [copied, setCopied] = useState(false);
+  const [measureOpen, setMeasureOpen] = useState(false);
 
   const crop = CROP_SPECS[selectedCropKey] || CROP_SPECS['milho'];
 
@@ -282,18 +285,26 @@ Nota técnica: ${crop.notes}
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="number"
               step={unitMode === 'ha' ? '0.1' : '10'}
               min={unitMode === 'ha' ? '0.05' : '1'}
               value={inputValue}
               onChange={e => setInputValue(parseFloat(e.target.value) || 0)}
-              className="w-32 px-3 py-2 text-base font-bold text-stone-900 dark:text-stone-100 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl outline-none"
+              className="w-32 px-3 py-2 text-base font-bold text-stone-900 dark:text-stone-100 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl outline-none tabular-nums"
             />
-            <span className="text-xs text-stone-600 dark:text-stone-400 font-medium">
+            <span className="text-xs text-stone-600 dark:text-stone-400 font-medium tabular-nums">
               = <strong>{hectares.toFixed(3)} hectares</strong> ({(hectares * 10000).toLocaleString()} m²)
             </span>
+            <button
+              type="button"
+              onClick={() => setMeasureOpen(true)}
+              className="ml-auto min-h-[36px] px-3 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Ruler className="w-3.5 h-3.5" />
+              <span>Medir no Terreno</span>
+            </button>
           </div>
         </div>
 
@@ -352,6 +363,15 @@ Nota técnica: ${crop.notes}
           </div>
         </div>
       </div>
+
+      <MachambaAreaMeasureModal
+        isOpen={measureOpen}
+        onClose={() => setMeasureOpen(false)}
+        onApplyAreaHa={areaHa => {
+          setUnitMode('ha');
+          setInputValue(areaHa);
+        }}
+      />
     </AriaModal>
   );
 };

@@ -22,8 +22,10 @@ import {
   WifiOff,
   Users,
   ShieldCheck,
-  AlertTriangle
+  AlertTriangle,
+  Ruler
 } from 'lucide-react';
+import { MachambaAreaMeasureModal } from './MachambaAreaMeasureModal';
 
 interface FieldSurveyModalProps {
   isOpen: boolean;
@@ -42,6 +44,7 @@ export const FieldSurveyModal: React.FC<FieldSurveyModalProps> = ({
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [saving, setSaving] = useState(false);
   const [savedRecord, setSavedRecord] = useState<FieldSurveyRecord | null>(null);
+  const [measureModalOpen, setMeasureModalOpen] = useState(false);
 
   // Step 1: Location & Respondent
   const [district, setDistrict] = useState<InhambaneDistrict>(defaultDistrict);
@@ -489,9 +492,19 @@ export const FieldSurveyModal: React.FC<FieldSurveyModalProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-black text-stone-700 dark:text-stone-300 uppercase tracking-wider mb-1">
-                    Área Total Cultivada (Hectares)
-                  </label>
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <label className="block text-[11px] font-black text-stone-700 dark:text-stone-300 uppercase tracking-wider">
+                      Área Cultivada (ha)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setMeasureModalOpen(true)}
+                      className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                    >
+                      <Ruler className="w-3 h-3" />
+                      <span>Medir Área</span>
+                    </button>
+                  </div>
                   <input
                     type="number"
                     step="0.25"
@@ -499,7 +512,7 @@ export const FieldSurveyModal: React.FC<FieldSurveyModalProps> = ({
                     max="200"
                     value={totalAreaHa}
                     onChange={e => setTotalAreaHa(parseFloat(e.target.value) || 0.5)}
-                    className="w-full px-3 py-2 text-xs font-bold rounded-xl border-2 border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-950 dark:text-stone-50"
+                    className="w-full px-3 py-2 text-xs font-bold rounded-xl border-2 border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-950 dark:text-stone-50 tabular-nums"
                   />
                 </div>
 
@@ -736,6 +749,12 @@ export const FieldSurveyModal: React.FC<FieldSurveyModalProps> = ({
           </div>
         </div>
       )}
+
+      <MachambaAreaMeasureModal
+        isOpen={measureModalOpen}
+        onClose={() => setMeasureModalOpen(false)}
+        onApplyAreaHa={areaHa => setTotalAreaHa(areaHa)}
+      />
     </AriaModal>
   );
 };

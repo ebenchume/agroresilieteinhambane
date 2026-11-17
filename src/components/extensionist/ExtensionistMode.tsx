@@ -6,12 +6,14 @@ import {
   ArrowRight, 
   TrendingUp,
   ClipboardCheck,
-  Smartphone
+  Smartphone,
+  Ruler
 } from 'lucide-react';
 import { MachambaVisitModal } from './MachambaVisitModal';
 import { SeedCalculatorModal } from './SeedCalculatorModal';
 import { PestReportModal } from './PestReportModal';
 import { FieldSurveyModal } from '../field/FieldSurveyModal';
+import { MachambaAreaMeasureModal } from '../field/MachambaAreaMeasureModal';
 import { MobileService } from '../../services/mobileService';
 import { FieldSurveyService } from '../../services/fieldSurveyService';
 
@@ -27,6 +29,7 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [pestReportOpen, setPestReportOpen] = useState(false);
   const [surveyModalOpen, setSurveyModalOpen] = useState(false);
+  const [measureModalOpen, setMeasureModalOpen] = useState(false);
   const [visitsCount, setVisitsCount] = useState(() => MobileService.getVisits().length);
   const [surveysCount, setSurveysCount] = useState(() => FieldSurveyService.getSurveys().length);
 
@@ -62,6 +65,14 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => setMeasureModalOpen(true)}
+            className="min-h-[40px] px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 text-xs font-extrabold flex items-center gap-1.5 shadow-sm whitespace-nowrap"
+          >
+            <Ruler className="w-4 h-4" />
+            <span>Medir Área no Terreno</span>
+          </button>
           <span className="text-xs font-semibold px-3 py-1 bg-sky-800/80 rounded-xl text-sky-200">
             {visitsCount} visitas · {surveysCount} inquéritos
           </span>
@@ -265,6 +276,11 @@ export const ExtensionistMode: React.FC<ExtensionistModeProps> = ({
       <PestReportModal
         isOpen={pestReportOpen}
         onClose={() => setPestReportOpen(false)}
+      />
+
+      <MachambaAreaMeasureModal
+        isOpen={measureModalOpen}
+        onClose={() => setMeasureModalOpen(false)}
       />
     </div>
   );

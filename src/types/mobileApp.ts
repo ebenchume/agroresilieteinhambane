@@ -1,4 +1,4 @@
-export type UserProfileType = 'produtor' | 'extensionista' | 'inquiridor';
+export type UserProfileType = 'produtor' | 'extensionista' | 'inquiridor' | 'medicao';
 
 export type InhambaneDistrict =
   | 'Homoíne'
@@ -100,6 +100,40 @@ export interface MachambaVisit {
   date: string;
   extensionistName: string;
   synced: boolean;
+}
+
+export interface MachambaGpsPoint {
+  lat: number;
+  lng: number;
+  accuracy?: number;
+  timestamp: number;
+}
+
+export interface MachambaPlanarPoint {
+  x: number; // meters
+  y: number; // meters
+}
+
+export type MachambaMeasurementMethod =
+  | 'gps_perimetro'
+  | 'desenho_terreno'
+  | 'fita_metrica'
+  | 'passos';
+
+export interface MachambaMeasurement {
+  id: string;
+  name: string;
+  district: InhambaneDistrict;
+  crop: string;
+  method: MachambaMeasurementMethod;
+  areaM2: number;
+  areaHa: number;
+  perimeterM: number;
+  verticesCount: number;
+  gpsPoints?: MachambaGpsPoint[];
+  planarPoints?: MachambaPlanarPoint[];
+  dimensionsSummary?: string;
+  createdAt: string;
 }
 
 export interface DistrictPestAlert {

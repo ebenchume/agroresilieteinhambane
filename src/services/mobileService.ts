@@ -1,4 +1,10 @@
-import { PhotoDiagnosisResult, AgronomistAnswer, MachambaVisit, DistrictPestAlert } from '../types/mobileApp';
+import {
+  PhotoDiagnosisResult,
+  AgronomistAnswer,
+  MachambaVisit,
+  DistrictPestAlert,
+  UserProfileType
+} from '../types/mobileApp';
 
 const STORAGE_VISITS_KEY = 'agro_machamba_visits';
 const STORAGE_PROFILE_KEY = 'agro_user_profile';
@@ -6,15 +12,22 @@ const STORAGE_SUNLIGHT_KEY = 'agro_sunlight_mode';
 
 export const MobileService = {
   // Profile persistence
-  getUserProfile(): 'produtor' | 'extensionista' | 'inquiridor' {
+  getUserProfile(): UserProfileType {
     try {
       const saved = localStorage.getItem(STORAGE_PROFILE_KEY);
-      if (saved === 'extensionista' || saved === 'produtor' || saved === 'inquiridor') return saved;
+      if (
+        saved === 'extensionista' ||
+        saved === 'produtor' ||
+        saved === 'inquiridor' ||
+        saved === 'medicao'
+      ) {
+        return saved;
+      }
     } catch (e) {}
     return 'produtor'; // Default to producer for smallholder farmers
   },
 
-  setUserProfile(profile: 'produtor' | 'extensionista' | 'inquiridor') {
+  setUserProfile(profile: UserProfileType) {
     try {
       localStorage.setItem(STORAGE_PROFILE_KEY, profile);
     } catch (e) {}

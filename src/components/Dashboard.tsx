@@ -28,7 +28,8 @@ import {
   Compass,
   Camera,
   ClipboardList,
-  ClipboardCheck
+  ClipboardCheck,
+  Ruler
 } from 'lucide-react';
 import { User, AuditLog, MarketPrice } from '../types/auth';
 import { StorageService } from '../services/storage';
@@ -50,6 +51,7 @@ import { ExtensionistMode } from './extensionist/ExtensionistMode';
 import { MobileService } from '../services/mobileService';
 import { UserProfileType } from '../types/mobileApp';
 import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
+import { MachambaAreaMeasureSection } from './field/MachambaAreaMeasureSection';
 
 interface DashboardProps {
   user: User;
@@ -68,7 +70,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   marketPrices,
   onShowToast
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'field-surveys' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'mobile-app' | 'field-surveys' | 'area-measure' | 'crop-figures' | 'agro-tips' | 'productivity' | 'calendar' | 'gemini-tips' | 'pests' | 'calculator' | 'forum' | 'weather' | 'market' | 'security' | 'simulators'>('overview');
 
   useEffect(() => {
     if (resetSignal > 0) {
@@ -375,6 +377,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('area-measure')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap shrink-0 ${
+            activeTab === 'area-measure'
+              ? 'bg-teal-700 text-white dark:bg-teal-600 ring-2 ring-teal-500/40'
+              : 'text-teal-800 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-950/50 bg-teal-50/70 dark:bg-teal-950/30 border border-teal-300 dark:border-teal-800/60'
+          }`}
+        >
+          <Ruler className="w-4 h-4" />
+          <span>Medir Machamba (Área)</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('crop-figures')}
           className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 whitespace-nowrap shrink-0 ${
             activeTab === 'crop-figures'
@@ -581,6 +595,22 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <ClipboardCheck className="w-4 h-4" />
                 <span>Inquéritos de Campo</span>
               </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setDashProfile('medicao');
+                  MobileService.setUserProfile('medicao');
+                }}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+                  dashProfile === 'medicao'
+                    ? 'bg-teal-700 text-white shadow-sm'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+                }`}
+              >
+                <Ruler className="w-4 h-4" />
+                <span>Medir Machamba</span>
+              </button>
             </div>
           </div>
 
@@ -600,6 +630,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
               onOpenCropGallery={() => setActiveTab('crop-figures')}
               onOpenFieldSurveys={() => setActiveTab('field-surveys')}
             />
+          ) : dashProfile === 'medicao' ? (
+            <MachambaAreaMeasureSection
+              sunlightMode={dashSunlight}
+              onShowToast={onShowToast}
+            />
           ) : (
             <FieldDataCollectionSection onShowToast={onShowToast} />
           )}
@@ -610,6 +645,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {activeTab === 'field-surveys' && (
         <div className="space-y-6">
           <FieldDataCollectionSection onShowToast={onShowToast} />
+        </div>
+      )}
+
+      {/* TAB: MEDIÇÃO DE ÁREA DAS MACHAMBAS */}
+      {activeTab === 'area-measure' && (
+        <div className="space-y-6">
+          <MachambaAreaMeasureSection onShowToast={onShowToast} />
         </div>
       )}
 

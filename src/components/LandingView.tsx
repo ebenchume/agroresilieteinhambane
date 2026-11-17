@@ -6,12 +6,14 @@ import {
   Sprout,
   ClipboardList,
   ClipboardCheck,
-  Compass
+  Compass,
+  Ruler
 } from 'lucide-react';
 import { CropFiguresGallery } from './CropFiguresGallery';
 import { ProducerMode } from './producer/ProducerMode';
 import { ExtensionistMode } from './extensionist/ExtensionistMode';
 import { FieldDataCollectionSection } from './field/FieldDataCollectionSection';
+import { MachambaAreaMeasureSection } from './field/MachambaAreaMeasureSection';
 import { AndroidDownloadModal } from './AndroidDownloadModal';
 import { VisitorCounterWidget } from './VisitorCounterWidget';
 import { MobileService } from '../services/mobileService';
@@ -196,7 +198,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
               Selecione o seu perfil de trabalho no terreno:
             </span>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
               {/* Profile 1: Sou Produtor */}
               <button
                 type="button"
@@ -325,6 +327,49 @@ export const LandingView: React.FC<LandingViewProps> = ({
                   </span>
                 </div>
               </button>
+
+              {/* Profile 4: Medir Área da Machamba */}
+              <button
+                type="button"
+                onClick={() => handleSelectProfile('medicao')}
+                className={`min-h-[72px] p-4 rounded-2xl border-2 text-left transition-all flex items-center gap-3.5 active:scale-[0.985] ${
+                  userProfile === 'medicao'
+                    ? sunlightMode
+                      ? 'bg-yellow-400 text-black border-yellow-400 font-black shadow-md'
+                      : 'bg-amber-800 text-white border-amber-700 shadow-md'
+                    : sunlightMode
+                      ? 'bg-stone-950 text-stone-200 border-stone-700 hover:border-yellow-400'
+                      : 'bg-stone-50/70 dark:bg-stone-900 text-stone-900 dark:text-stone-100 border-stone-200 dark:border-stone-800 hover:border-amber-600'
+                }`}
+              >
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                    userProfile === 'medicao'
+                      ? sunlightMode
+                        ? 'bg-black text-yellow-400'
+                        : 'bg-white/15 text-white'
+                      : 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400'
+                  }`}
+                >
+                  <Ruler className="w-6 h-6" />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-sm sm:text-base font-extrabold block leading-tight">
+                    Medir Machamba
+                  </span>
+                  <span
+                    className={`text-xs block mt-0.5 truncate ${
+                      userProfile === 'medicao'
+                        ? sunlightMode
+                          ? 'text-stone-900 font-bold'
+                          : 'text-amber-100'
+                        : 'text-stone-500 dark:text-stone-400'
+                    }`}
+                  >
+                    Área por GPS, grelha e passos
+                  </span>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -344,6 +389,8 @@ export const LandingView: React.FC<LandingViewProps> = ({
               onOpenCropGallery={handleScrollToGallery}
               onOpenFieldSurveys={() => handleSelectProfile('inquiridor')}
             />
+          ) : userProfile === 'medicao' ? (
+            <MachambaAreaMeasureSection sunlightMode={sunlightMode} />
           ) : (
             <FieldDataCollectionSection />
           )}
@@ -503,7 +550,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
         aria-label="Navegação rápida móvel"
         className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-t border-stone-200 dark:border-stone-800 pb-safe"
       >
-        <div className="grid grid-cols-4 items-center h-14 px-1">
+        <div className="grid grid-cols-5 items-center h-14 px-1">
           <button
             type="button"
             onClick={() => {
@@ -534,6 +581,22 @@ export const LandingView: React.FC<LandingViewProps> = ({
           >
             <ClipboardList className="w-5 h-5 mb-0.5" />
             <span>Extensão</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              handleSelectProfile('medicao');
+              workspaceRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className={`flex flex-col items-center justify-center py-1 rounded-lg text-[10px] font-bold transition-colors ${
+              userProfile === 'medicao'
+                ? 'text-amber-700 dark:text-amber-400'
+                : 'text-stone-500 dark:text-stone-400'
+            }`}
+          >
+            <Ruler className="w-5 h-5 mb-0.5" />
+            <span>Medir</span>
           </button>
 
           <button

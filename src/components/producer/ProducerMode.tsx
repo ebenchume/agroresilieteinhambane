@@ -13,12 +13,14 @@ import {
   Flame,
   CheckCircle2,
   Sprout,
-  Smartphone
+  Smartphone,
+  Ruler
 } from 'lucide-react';
 import { PlantDiagnosisModal } from './PlantDiagnosisModal';
 import { AskAgronomistModal } from './AskAgronomistModal';
 import { DroughtTipsModal } from './DroughtTipsModal';
 import { AndroidDownloadModal } from '../AndroidDownloadModal';
+import { MachambaAreaMeasureModal } from '../field/MachambaAreaMeasureModal';
 
 interface ProducerModeProps {
   sunlightMode: boolean;
@@ -34,6 +36,7 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
   const [diagnosisOpen, setDiagnosisOpen] = useState(false);
   const [askOpen, setAskOpen] = useState(false);
   const [droughtOpen, setDroughtOpen] = useState(false);
+  const [measureOpen, setMeasureOpen] = useState(false);
   const [androidModalOpen, setAndroidModalOpen] = useState(false);
 
   return (
@@ -83,8 +86,8 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
         </button>
       </div>
 
-      {/* THREE HUGE ACTION BUTTONS FOR THE PRODUCER */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+      {/* FOUR ACTION BUTTONS FOR THE PRODUCER */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         
         {/* BUTTON 1: Diagnosticar Planta por Foto */}
         <button
@@ -245,6 +248,57 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
           </div>
         </button>
 
+        {/* BUTTON 4: Medir Tamanho da Machamba */}
+        <button
+          type="button"
+          onClick={() => setMeasureOpen(true)}
+          className={`group p-6 rounded-3xl border-2 text-left transition-all active:scale-[0.985] shadow-sm flex flex-col justify-between min-h-[220px] ${
+            sunlightMode
+              ? 'bg-stone-950 border-yellow-400 text-white hover:bg-black focus:ring-4 focus:ring-yellow-400'
+              : 'bg-white dark:bg-stone-900 border-teal-500/80 hover:border-teal-600 dark:border-teal-700 hover:shadow-lg'
+          }`}
+        >
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-md ${
+                sunlightMode
+                  ? 'bg-yellow-400 text-black font-black'
+                  : 'bg-teal-700 text-white'
+              }`}>
+                <Ruler className="w-8 h-8" />
+              </div>
+
+              <span className={`text-xs font-bold ${
+                sunlightMode ? 'text-yellow-300' : 'text-teal-800 dark:text-teal-300'
+              }`}>
+                Terreno Offline
+              </span>
+            </div>
+
+            <h3 className={`font-display text-xl sm:text-2xl font-black tracking-tight leading-snug ${
+              sunlightMode ? 'text-yellow-400' : 'text-stone-900 dark:text-stone-100'
+            }`}>
+              Medir Tamanho da Machamba
+            </h3>
+
+            <p className={`text-xs mt-2 leading-relaxed ${
+              sunlightMode ? 'text-stone-200 font-semibold' : 'text-stone-600 dark:text-stone-400'
+            }`}>
+              Calcule hectares e metros quadrados caminhando com <strong>GPS, desenhando a parcela ou usando passos/fita</strong>.
+            </p>
+          </div>
+
+          <div className="pt-4 mt-2 border-t border-stone-200 dark:border-stone-800 flex items-center justify-between">
+            <span className={`text-xs font-bold flex items-center gap-1.5 ${
+              sunlightMode ? 'text-yellow-300 font-black' : 'text-teal-700 dark:text-teal-400'
+            }`}>
+              <span>Medir Agora</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+            <span className="text-[10px] text-stone-400">Hectares / Camalhões</span>
+          </div>
+        </button>
+
       </div>
 
       {/* Field status ticker */}
@@ -337,6 +391,12 @@ export const ProducerMode: React.FC<ProducerModeProps> = ({
       <DroughtTipsModal
         isOpen={droughtOpen}
         onClose={() => setDroughtOpen(false)}
+        sunlightMode={sunlightMode}
+      />
+
+      <MachambaAreaMeasureModal
+        isOpen={measureOpen}
+        onClose={() => setMeasureOpen(false)}
         sunlightMode={sunlightMode}
       />
     </div>
